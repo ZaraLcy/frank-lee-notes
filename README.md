@@ -4,8 +4,8 @@ title: 法蘭克李的筆記本
 permalink: /
 ---
 
-<div style="text-align: center; margin: 2em 0;">
-  <img src="./assets/images/capybara_pig_mascots.png" alt="水豚君與小白豬" style="max-width: 300px; border-radius: 10px;">
+<div style="text-align: center; margin: 2.5em 0; padding: 25px; background: linear-gradient(135deg, #FFF9F0 0%, #F9F7F2 100%); border: 3px double #D8D0C3; border-radius: 12px; box-shadow: 0 4px 16px rgba(74, 124, 89, 0.12);">
+  <img src="./assets/images/capybara_pig_mascots.png" alt="壁爐前的水豚君與小白豬" style="max-width: 350px; border-radius: 10px; box-shadow: 0 3px 12px rgba(51, 45, 42, 0.18);">
 </div>
 
 # 👋 嗨，歡迎來到我的筆記本！

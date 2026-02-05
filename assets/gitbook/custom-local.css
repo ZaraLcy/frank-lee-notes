@@ -1,5 +1,460 @@
-/* This file is kept intentionally blank inside the jekyll-github-theme
- * It gets imported at the end of custom.css
- * Its purpose is for users of the theme to be able to add css rules from a blank file
- *   these get simply added to the ones already active in the layout.
- */
+/* ==========================================================================
+   溫馨古典風格 - 法蘭克李的筆記本
+   ========================================================================== */
+
+/* 引入 Google Fonts - 思源宋體 (Noto Serif TC) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+
+/* ==========================================================================
+   色彩系統 - 溫暖羊皮紙風格
+   ========================================================================== */
+
+:root {
+    /* 主色調 */
+    --bg-primary: #F9F7F2;          /* 羊皮紙米色 - 主背景 */
+    --bg-secondary: #FFF9F0;        /* 更淺的米色 - 卡片背景 */
+    --bg-sidebar: #F5F2EA;          /* 側邊欄背景 */
+    
+    /* 文字顏色 */
+    --text-primary: #332D2A;        /* 深咖啡 - 主文字 */
+    --text-secondary: #6B5D55;      /* 中咖啡 - 次要文字 */
+    --text-muted: #998E85;          /* 淺咖啡 - 輔助文字 */
+    
+    /* 強調色 */
+    --accent-forest: #4A7C59;       /* 森林綠 - 主要連結/強調 */
+    --accent-warm: #A67C52;         /* 暖棕 - 次要強調 */
+    --accent-gold: #C9A87C;         /* 金色 - 裝飾 */
+    
+    /* 邊框與分隔 */
+    --border-subtle: #E8E3D8;       /* 柔和邊框 */
+    --border-medium: #D8D0C3;       /* 中等邊框 */
+    
+    /* 陰影 */
+    --shadow-sm: 0 1px 3px rgba(51, 45, 42, 0.08);
+    --shadow-md: 0 2px 8px rgba(51, 45, 42, 0.12);
+    --shadow-lg: 0 4px 16px rgba(51, 45, 42, 0.15);
+    
+    /* 字體家族 */
+    --font-serif: 'Noto Serif TC', Georgia, 'Times New Roman', serif;
+    --font-sans: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+}
+
+/* ==========================================================================
+   全域背景與基礎樣式
+   ========================================================================== */
+
+/* 整體背景 */
+.book .book-body {
+    background-color: var(--bg-primary) !important;
+}
+
+/* 側邊欄背景 */
+.book .book-summary {
+    background-color: var(--bg-sidebar) !important;
+    border-right: 1px solid var(--border-medium);
+}
+
+/* 頂部導航欄 */
+.book .book-header {
+    background-color: var(--bg-secondary) !important;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+/* ==========================================================================
+   內容區域樣式
+   ========================================================================== */
+
+/* 主內容區域 */
+.markdown-section {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   字體與排版
+   ========================================================================== */
+
+/* 標題樣式 - 使用襯線字體 */
+.markdown-section h1,
+.markdown-section h2,
+.markdown-section h3,
+.markdown-section h4 {
+    font-family: var(--font-serif);
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+}
+
+/* H1 特殊裝飾 */
+.markdown-section h1 {
+    font-size: 2.2em;
+    border-bottom: 2px solid var(--accent-warm);
+    padding-bottom: 14px;
+    margin-bottom: 30px;
+    color: var(--accent-forest);
+}
+
+.markdown-section h2 {
+    font-size: 1.8em;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 10px;
+}
+
+.markdown-section h3 {
+    font-size: 1.4em;
+    color: var(--accent-forest);
+}
+
+/* 內文段落 */
+.markdown-section p {
+    font-family: var(--font-sans);
+    line-height: 1.85;
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 1.4em;
+}
+
+/* 列表項目 */
+.markdown-section li {
+    font-family: var(--font-sans);
+    line-height: 1.75;
+    color: var(--text-primary);
+    margin-bottom: 0.5em;
+}
+
+/* 強調文字 */
+.markdown-section strong {
+    color: var(--accent-forest);
+    font-weight: 600;
+}
+
+.markdown-section em {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* ==========================================================================
+   連結樣式
+   ========================================================================== */
+
+.markdown-section a {
+    color: var(--accent-forest);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.markdown-section a:hover {
+    color: var(--accent-warm);
+    border-bottom-color: var(--accent-warm);
+}
+
+/* ==========================================================================
+   引用區塊
+   ========================================================================== */
+
+.markdown-section blockquote {
+    border-left: 4px solid var(--accent-forest);
+    background-color: var(--bg-primary);
+    padding: 18px 24px;
+    margin: 1.5em 0;
+    font-style: italic;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    box-shadow: var(--shadow-sm);
+}
+
+.markdown-section blockquote p {
+    margin-bottom: 0.5em;
+}
+
+.markdown-section blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   代碼區塊
+   ========================================================================== */
+
+.markdown-section code {
+    background-color: var(--bg-primary);
+    color: var(--accent-forest);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    border: 1px solid var(--border-subtle);
+}
+
+.markdown-section pre {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-medium);
+    border-radius: 6px;
+    padding: 20px;
+    overflow-x: auto;
+    box-shadow: var(--shadow-sm);
+}
+
+.markdown-section pre code {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* ==========================================================================
+   側邊欄導航
+   ========================================================================== */
+
+/* 側邊欄整體 */
+.book-summary ul.summary {
+    padding: 20px 15px;
+}
+
+/* 章節分隔線 */
+.summary li.divider {
+    height: 1px;
+    background: var(--border-medium);
+    margin: 18px 0;
+}
+
+/* 章節標題 */
+.summary li.header {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    color: var(--accent-forest);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    padding: 12px 15px;
+    margin-top: 18px;
+}
+
+/* 文章連結 */
+.summary li a {
+    color: var(--text-primary);
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+    font-family: var(--font-sans);
+    font-size: 14px;
+}
+
+.summary li a:hover {
+    background-color: rgba(74, 124, 89, 0.08);
+    color: var(--accent-forest);
+    padding-left: 22px;
+    transform: translateX(2px);
+}
+
+.summary li.active > a {
+    background-color: rgba(74, 124, 89, 0.12);
+    color: var(--accent-forest);
+    font-weight: 500;
+    border-left: 3px solid var(--accent-forest);
+}
+
+/* ==========================================================================
+   搜尋功能
+   ========================================================================== */
+
+/* 搜尋框容器 */
+#book-search-input-inside {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-medium);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    margin: 12px;
+}
+
+/* 搜尋輸入框 */
+#book-search-input-inside input {
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+}
+
+#book-search-input-inside input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+/* 搜尋結果 */
+.search-results .search-results-item {
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 24px 0;
+}
+
+.search-results .search-results-title {
+    font-family: var(--font-serif);
+    color: var(--accent-forest);
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.search-results .search-results-body {
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* 搜尋高亮 */
+.search-results mark {
+    background-color: rgba(201, 168, 124, 0.3);
+    color: var(--accent-warm);
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+/* ==========================================================================
+   圖片與媒體
+   ========================================================================== */
+
+.markdown-section img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    margin: 1.5em auto;
+    display: block;
+}
+
+/* ==========================================================================
+   表格
+   ========================================================================== */
+
+.markdown-section table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5em 0;
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.markdown-section th {
+    background-color: var(--bg-primary);
+    color: var(--accent-forest);
+    font-family: var(--font-serif);
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--border-medium);
+}
+
+.markdown-section td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
+
+.markdown-section tr:last-child td {
+    border-bottom: none;
+}
+
+.markdown-section tr:hover {
+    background-color: var(--bg-primary);
+}
+
+/* ==========================================================================
+   水平分隔線
+   ========================================================================== */
+
+.markdown-section hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, 
+        transparent, 
+        var(--border-medium) 20%, 
+        var(--border-medium) 80%, 
+        transparent
+    );
+    margin: 2.5em 0;
+}
+
+/* ==========================================================================
+   返回頂部按鈕
+   ========================================================================== */
+
+.back-to-top {
+    background-color: var(--accent-forest) !important;
+    color: white !important;
+    border-radius: 50%;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+}
+
+.back-to-top:hover {
+    background-color: var(--accent-warm) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(74, 124, 89, 0.3);
+}
+
+/* ==========================================================================
+   閱讀進度條
+   ========================================================================== */
+
+.reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-forest), var(--accent-gold));
+    z-index: 9999;
+    transition: width 0.1s ease;
+}
+
+/* ==========================================================================
+   響應式設計
+   ========================================================================== */
+
+@media (max-width: 1240px) {
+    .markdown-section {
+        padding: 28px;
+    }
+    
+    .markdown-section h1 {
+        font-size: 1.9em;
+    }
+    
+    .markdown-section h2 {
+        font-size: 1.6em;
+    }
+}
+
+@media (max-width: 768px) {
+    .markdown-section {
+        padding: 20px;
+        border-radius: 0;
+    }
+    
+    .markdown-section h1 {
+        font-size: 1.7em;
+    }
+    
+    .markdown-section p {
+        font-size: 15px;
+    }
+}
+
+/* ==========================================================================
+   打印樣式
+   ========================================================================== */
+
+@media print {
+    .book .book-body,
+    .markdown-section {
+        background-color: white !important;
+    }
+    
+    .markdown-section a {
+        color: black !important;
+        text-decoration: underline;
+    }
+}
