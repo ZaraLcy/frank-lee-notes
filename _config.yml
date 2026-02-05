@@ -1,16 +1,16 @@
 # Configurations
-title:            Jekyll Gitbook
-longtitle:        Jekyll Gitbook
-author:           HE Tao
-email:            sighingnow@gmail.com
+title:            法蘭克李的筆記本
+longtitle:        Frank Lee's Notes - 法蘭克李的筆記本
+author:           Frank Lee
+email:            zaralcyld@proton.me
 description: >
-  Build Jekyll site with the GitBook style.
+  這個部落格收集自己一些思考實驗與筆記
 
 version:          1.0
 gitbook_version:  3.2.3
 
-url:              'https://sighingnow.github.io'
-baseurl:          '/jekyll-gitbook'
+url:              'https://zaralcy.github.io'
+baseurl:          '/frank-lee-notes'
 rss:              RSS
 
 # bootstrap: use the remote theme for the site itself

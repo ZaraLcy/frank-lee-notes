@@ -1,0 +1,33 @@
+# Git 相關
+.git
+.gitignore
+.gitattributes
+
+# Jekyll 生成檔案
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Ruby 相關
+.bundle/
+vendor/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 編輯器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日誌檔案
+*.log
+
+# 臨時檔案
+tmp/
+temp/

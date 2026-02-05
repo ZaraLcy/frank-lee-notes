@@ -1,3 +1,39 @@
+# Jekyll 建置檔案
 _site/
 _draft/
 .jekyll-cache/
+.sass-cache/
+
+# 系統檔案
+.DS_Store
+Thumbs.db
+
+# IDE 和編輯器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 環境變數和機密資訊
+.env
+.env.local
+*.key
+*.pem
+
+# Node.js (如果未來使用)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Docker 本地資料
+.docker/
+
+# Bundler
+vendor/bundle/
+.bundle/
+
+# 其他臨時檔案
+*.log
+*.tmp
+*.bak

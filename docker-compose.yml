@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  jekyll:
+    build: .
+    container_name: frank-lee-blog
+    ports:
+      - "4000:4000" # Jekyll 主服務
+      - "35729:35729" # LiveReload
+    volumes:
+      - .:/app # 將當前目錄掛載到容器中，實現即時同步
+      - bundle_cache:/usr/local/bundle # 快取 gems，加快重建速度
+    environment:
+      - JEKYLL_ENV=development
+    command: bundle exec jekyll serve --host 0.0.0.0 --livereload --force_polling
+
+volumes:
+  bundle_cache:
