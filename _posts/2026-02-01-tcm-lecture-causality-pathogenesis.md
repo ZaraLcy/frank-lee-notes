@@ -23,7 +23,7 @@ layout: post
 
 我覺得結構上他掌握得還不錯，所以就請他將這次的投影片畫成一張圖速覽，提供給大家參考。
 
-![因果推理與病機鏈：理論域與臨床域的橋接](/frank-lee-notes/assets/images/tcm-lecture-202602.png)
+![因果推理與病機鏈:理論域與臨床域的橋接](/frank-lee-notes/assets/images/tcm-lecture-202602.jpg)
 
 ---
 
