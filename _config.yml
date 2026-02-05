@@ -13,6 +13,9 @@ url:              'https://zaralcy.github.io'
 baseurl:          '/frank-lee-notes'
 rss:              RSS
 
+# Social media preview image (Open Graph)
+og_image:         /frank-lee-notes/assets/images/og-image.png
+
 # bootstrap: use the remote theme for the site itself
 remote_theme: sighingnow/jekyll-gitbook
 
