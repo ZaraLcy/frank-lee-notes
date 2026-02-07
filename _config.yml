@@ -71,6 +71,9 @@ destination:      ./_site
 incremental:      false
 regenerate:       true
 
+# Allow posts with future dates (for micro-posts with timestamps)
+future:           true
+
 plugins:
   - jekyll-feed
   - jekyll-readme-index

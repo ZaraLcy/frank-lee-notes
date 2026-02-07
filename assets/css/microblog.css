@@ -1,0 +1,246 @@
+/* ================================================
+   微誌流 (Micro-blog) 專屬樣式
+   ================================================ */
+
+/* 微誌流頁面容器 */
+.microblog-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 微誌流標題 */
+.microblog-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.microblog-header h1 {
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.microblog-header .subtitle {
+  color: #666;
+  font-size: 1em;
+}
+
+/* 微誌卡片 */
+.micro-card {
+  background: #fafafa;
+  border-left: 4px solid #1976d2;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.micro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 卡片頭部（時間和標籤） */
+.micro-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.micro-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.micro-time::before {
+  content: "🕐";
+}
+
+/* 標籤樣式 */
+.micro-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.micro-tag {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.micro-tag:hover {
+  background: #bbdefb;
+}
+
+/* 卡片內容 */
+.micro-card-content {
+  color: #333;
+  font-size: 1em;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+/* 卡片底部（閱讀更多連結） */
+.micro-card-footer {
+  text-align: right;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.micro-read-more {
+  color: #1976d2;
+  text-decoration: none;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.micro-read-more:hover {
+  color: #1565c0;
+  text-decoration: underline;
+}
+
+/* ================================================
+   單篇短訊息頁面樣式
+   ================================================ */
+
+/* 短訊息頁面容器 */
+.micro-post-page {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fafafa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 短訊息標題 */
+.micro-post-page h1 {
+  font-size: 1.8em;
+  color: #333;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+/* 短訊息元資訊 */
+.micro-post-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 0.95em;
+  color: #666;
+}
+
+.micro-post-date {
+  font-weight: 500;
+}
+
+/* 短訊息內容 */
+.micro-post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* 短訊息標籤區 */
+.micro-post-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.micro-post-tag {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 6px 14px;
+  border-radius: 14px;
+  font-size: 0.9em;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.micro-post-tag:hover {
+  background: #bbdefb;
+}
+
+/* ================================================
+   響應式設計
+   ================================================ */
+
+@media (max-width: 768px) {
+  .microblog-container {
+    padding: 15px;
+  }
+  
+  .micro-card {
+    padding: 15px;
+  }
+  
+  .micro-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .micro-post-page {
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  .micro-post-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* ================================================
+   深色模式支援（可選）
+   ================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .micro-card {
+    background: #2a2a2a;
+    border-left-color: #42a5f5;
+  }
+  
+  .micro-card-content {
+    color: #e0e0e0;
+  }
+  
+  .micro-tag {
+    background: #1e3a5f;
+    color: #90caf9;
+  }
+  
+  .micro-post-page {
+    background: #2a2a2a;
+  }
+  
+  .micro-post-page h1,
+  .micro-post-content {
+    color: #e0e0e0;
+  }
+}
