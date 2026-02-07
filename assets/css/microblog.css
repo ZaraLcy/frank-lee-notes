@@ -1,5 +1,5 @@
 /* ================================================
-   微誌流 (Micro-blog) 專屬樣式
+   微誌流 (Micro-blog) 專屬樣式 - 暖色系設計
    ================================================ */
 
 /* 微誌流頁面容器 */
@@ -14,34 +14,34 @@
   text-align: center;
   margin-bottom: 40px;
   padding-bottom: 20px;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid #f0e6dc;
 }
 
 .microblog-header h1 {
   font-size: 2em;
-  color: #333;
+  color: #8b5a3c;
   margin-bottom: 10px;
 }
 
 .microblog-header .subtitle {
-  color: #666;
+  color: #a0826d;
   font-size: 1em;
 }
 
-/* 微誌卡片 */
+/* 微誌卡片 - 溫暖優雅的配色 */
 .micro-card {
-  background: #fafafa;
-  border-left: 4px solid #1976d2;
+  background: linear-gradient(135deg, #fffbf5 0%, #fef8f0 100%);
+  border-left: 4px solid #d4a574;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(139, 90, 60, 0.08);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .micro-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(139, 90, 60, 0.15);
 }
 
 /* 卡片頭部（時間和標籤） */
@@ -51,7 +51,7 @@
   align-items: center;
   margin-bottom: 12px;
   font-size: 0.9em;
-  color: #666;
+  color: #a0826d;
 }
 
 .micro-time {
@@ -59,13 +59,14 @@
   align-items: center;
   gap: 8px;
   font-weight: 500;
+  color: #8b5a3c;
 }
 
 .micro-time::before {
   content: "🕐";
 }
 
-/* 標籤樣式 */
+/* 標籤樣式 - 溫暖的桃色系 */
 .micro-tags {
   display: flex;
   gap: 8px;
@@ -73,8 +74,8 @@
 }
 
 .micro-tag {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: #ffecd9;
+  color: #c67d4e;
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.85em;
@@ -83,12 +84,12 @@
 }
 
 .micro-tag:hover {
-  background: #bbdefb;
+  background: #ffd9b3;
 }
 
 /* 卡片內容 */
 .micro-card-content {
-  color: #333;
+  color: #5a4a3a;
   font-size: 1em;
   line-height: 1.6;
   margin-bottom: 12px;
@@ -99,11 +100,11 @@
   text-align: right;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #f0e6dc;
 }
 
 .micro-read-more {
-  color: #1976d2;
+  color: #c67d4e;
   text-decoration: none;
   font-size: 0.9em;
   font-weight: 500;
@@ -111,12 +112,12 @@
 }
 
 .micro-read-more:hover {
-  color: #1565c0;
+  color: #b8693d;
   text-decoration: underline;
 }
 
 /* ================================================
-   單篇短訊息頁面樣式
+   單篇短訊息頁面樣式 - 暖色系
    ================================================ */
 
 /* 短訊息頁面容器 */
@@ -124,15 +125,15 @@
   max-width: 700px;
   margin: 40px auto;
   padding: 30px;
-  background: #fafafa;
+  background: linear-gradient(135deg, #fffbf5 0%, #fef8f0 100%);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(139, 90, 60, 0.1);
 }
 
 /* 短訊息標題 */
 .micro-post-page h1 {
   font-size: 1.8em;
-  color: #333;
+  color: #8b5a3c;
   margin-bottom: 20px;
   line-height: 1.4;
 }
@@ -144,20 +145,21 @@
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid #f0e6dc;
   font-size: 0.95em;
-  color: #666;
+  color: #a0826d;
 }
 
 .micro-post-date {
   font-weight: 500;
+  color: #8b5a3c;
 }
 
 /* 短訊息內容 */
 .micro-post-content {
   font-size: 1.1em;
   line-height: 1.8;
-  color: #333;
+  color: #5a4a3a;
   margin-bottom: 20px;
 }
 
@@ -168,12 +170,12 @@
   flex-wrap: wrap;
   margin-top: 20px;
   padding-top: 15px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #f0e6dc;
 }
 
 .micro-post-tag {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: #ffecd9;
+  color: #c67d4e;
   padding: 6px 14px;
   border-radius: 14px;
   font-size: 0.9em;
@@ -182,7 +184,7 @@
 }
 
 .micro-post-tag:hover {
-  background: #bbdefb;
+  background: #ffd9b3;
 }
 
 /* ================================================
@@ -193,22 +195,22 @@
   .microblog-container {
     padding: 15px;
   }
-  
+
   .micro-card {
     padding: 15px;
   }
-  
+
   .micro-card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .micro-post-page {
     margin: 20px auto;
     padding: 20px;
   }
-  
+
   .micro-post-meta {
     flex-direction: column;
     align-items: flex-start;
@@ -217,30 +219,99 @@
 }
 
 /* ================================================
-   深色模式支援（可選）
+   深色/夜間模式適配 - 保持暖色調
    ================================================ */
 
-@media (prefers-color-scheme: dark) {
-  .micro-card {
-    background: #2a2a2a;
-    border-left-color: #42a5f5;
-  }
-  
-  .micro-card-content {
-    color: #e0e0e0;
-  }
-  
-  .micro-tag {
-    background: #1e3a5f;
-    color: #90caf9;
-  }
-  
-  .micro-post-page {
-    background: #2a2a2a;
-  }
-  
-  .micro-post-page h1,
-  .micro-post-content {
-    color: #e0e0e0;
-  }
+/* Night 模式 - 使用深棕溫暖色調而非純黑 */
+.book.color-theme-2 .micro-card {
+  background: linear-gradient(135deg, #2d2520 0%, #3a2f28 100%) !important;
+  border-left-color: #d4a574;
+}
+
+.book.color-theme-2 .micro-card-content {
+  color: #e8d5c4 !important;
+}
+
+.book.color-theme-2 .micro-card-header {
+  color: #c9b5a0 !important;
+}
+
+.book.color-theme-2 .micro-time {
+  color: #d4a574 !important;
+}
+
+.book.color-theme-2 .micro-tag {
+  background: #4a3a2f;
+  color: #f4c998 !important;
+}
+
+.book.color-theme-2 .micro-tag:hover {
+  background: #5a4a3f;
+}
+
+.book.color-theme-2 .micro-post-page {
+  background: linear-gradient(135deg, #2d2520 0%, #3a2f28 100%) !important;
+}
+
+.book.color-theme-2 .micro-post-page h1 {
+  color: #e8d5c4 !important;
+}
+
+.book.color-theme-2 .micro-post-content {
+  color: #e8d5c4 !important;
+}
+
+.book.color-theme-2 .micro-post-meta {
+  color: #c9b5a0 !important;
+  border-bottom-color: #4a3a2f;
+}
+
+.book.color-theme-2 .micro-post-date {
+  color: #d4a574 !important;
+}
+
+.book.color-theme-2 .micro-post-tags {
+  border-top-color: #4a3a2f;
+}
+
+.book.color-theme-2 .micro-post-tag {
+  background: #4a3a2f;
+  color: #f4c998 !important;
+}
+
+.book.color-theme-2 .micro-post-tag:hover {
+  background: #5a4a3f;
+}
+
+.book.color-theme-2 .microblog-header h1 {
+  color: #e8d5c4 !important;
+}
+
+.book.color-theme-2 .microblog-header .subtitle {
+  color: #c9b5a0 !important;
+}
+
+.book.color-theme-2 .microblog-header {
+  border-bottom-color: #4a3a2f;
+}
+
+.book.color-theme-2 .micro-card-footer {
+  border-top-color: #4a3a2f;
+}
+
+.book.color-theme-2 .micro-read-more {
+  color: #f4c998 !important;
+}
+
+.book.color-theme-2 .micro-read-more:hover {
+  color: #ffd9b3 !important;
+}
+
+/* Sepia 模式 - 增強暖色調 */
+.book.color-theme-1 .micro-card {
+  background: linear-gradient(135deg, #f9f5f0 0%, #f4ede3 100%);
+}
+
+.book.color-theme-1 .micro-post-page {
+  background: linear-gradient(135deg, #f9f5f0 0%, #f4ede3 100%);
 }
