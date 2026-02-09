@@ -52,4 +52,5 @@ layout: post
 
 ---
 
-> 💭 這是一篇思考筆記，歡迎交流討論。
+> 💭 這是一篇思考筆記，歡迎來信討論：  
+[zaralcyld@proton.me](mailto:zaralcyld@proton.me)
