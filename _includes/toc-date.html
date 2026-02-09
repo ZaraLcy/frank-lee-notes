@@ -3,7 +3,7 @@
         // Fixes the page links scroll problem on both desktop and mobile browsers
         function pageScrollToTop(element) {
             // both mobile and non-mobile
-            $('div.body-inner').animate({scrollTop: 0});
+            $('div.body-inner').animate({ scrollTop: 0 });
             $(element).parent().find('li>ul>li').removeClass('active');
             return true;  // propagate
         }
@@ -21,6 +21,68 @@
             }
             return true;
         }
+
+        // Post sorting functionality
+        let currentSortOrder = localStorage.getItem('postSortOrder') || 'desc';
+
+        function togglePostSort() {
+            currentSortOrder = currentSortOrder === 'desc' ? 'asc' : 'desc';
+            localStorage.setItem('postSortOrder', currentSortOrder);
+            sortPosts();
+            updateSortButton();
+        }
+
+        function sortPosts() {
+            const summaryList = $('ul.summary');
+            const postItems = summaryList.find('li.chapter[data-level="1.1"], li.chapter[data-level="1.2"]').slice(1).get();
+
+            postItems.sort(function (a, b) {
+                const pathA = $(a).data('path') || '';
+                const pathB = $(b).data('path') || '';
+
+                // Extract date from path (format: /YYYY-MM-DD-title)
+                const dateMatchA = pathA.match(/\/(\d{4}-\d{2}-\d{2})/);
+                const dateMatchB = pathB.match(/\/(\d{4}-\d{2}-\d{2})/);
+
+                if (!dateMatchA || !dateMatchB) {
+                    return 0;
+                }
+
+                const dateA = new Date(dateMatchA[1]);
+                const dateB = new Date(dateMatchB[1]);
+
+                if (currentSortOrder === 'asc') {
+                    return dateA - dateB;
+                } else {
+                    return dateB - dateA;
+                }
+            });
+
+            // Find the first divider after the home link
+            const firstDivider = summaryList.find('li.divider').first();
+
+            // Reinsert sorted items
+            $(postItems).each(function () {
+                $(this).insertBefore(firstDivider);
+            });
+        }
+
+        function updateSortButton() {
+            const button = $('#post-sort-toggle');
+            if (currentSortOrder === 'desc') {
+                button.html('📅 ↓ 新→舊');
+                button.attr('title', '點擊切換為舊到新');
+            } else {
+                button.html('📅 ↑ 舊→新');
+                button.attr('title', '點擊切換為新到舊');
+            }
+        }
+
+        // Initialize sorting on page load
+        $(document).ready(function () {
+            sortPosts();
+            updateSortButton();
+        });
     </script>
 
     <nav role="navigation">
@@ -30,89 +92,97 @@
         <div id="book-search-input-link" role="search">
             <a href="{{site.baseurl}}/assets/search.html">Click to Search</a>
         </div>
+        <div id="post-sort-control" style="padding: 10px 15px; border-bottom: 1px solid rgba(0,0,0,.07);">
+            <button id="post-sort-toggle" onclick="togglePostSort()"
+                style="width: 100%; padding: 8px 12px; background: rgba(0,0,0,.05); border: 1px solid rgba(0,0,0,.1); border-radius: 4px; cursor: pointer; font-size: 13px; transition: all 0.2s;"
+                onmouseover="this.style.background='rgba(0,0,0,.1)'"
+                onmouseout="this.style.background='rgba(0,0,0,.05)'">
+                📅 ↓ 新→舊
+            </button>
+        </div>
         <ul class="summary">
             {% if page.url == "/index.html" or page.url == "/" %}
             <li class="chapter active" data-level="1.1" data-path="{{site.baseurl}}">
-            {% else %}
+                {% else %}
             <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}">
-            {% endif %}
+                {% endif %}
                 <a href="{{site.baseurl}}/" onclick="pageScrollToTop(this)">
                     {{ site.title | escape }}
                 </a>
                 {% if site.toc.enabled %}
-                    {% if site.toc.enabled_index %}
-                        {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
-                    {% endif %}
+                {% if site.toc.enabled_index %}
+                {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
+                {% endif %}
                 {% endif %}
             </li>
 
             <li class="divider"></li>
 
             {% if site.ordered_collections %}
-                {% for label in site.ordered_collections %}
-                    {% assign collection = site.collections | where: "label", label | first %}
-                    <!-- <p>{{ collection.label }}</p> -->
-                    {% if collection.output %}
-                        {% if collection.label == "posts" %}
-                            {% assign reversed_posts = site[collection.label] | reverse %}
-                        {% else %}
-                            {% assign reversed_posts = site[collection.label] %}
-                        {% endif %}
-
-                        {% for post in reversed_posts %}
-                            {% if page.url == post.url %}
-                            <li class="chapter active" data-level="1.2" data-path="{{site.baseurl}}{{post.url}}">
-                            {% else %}
-                            <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
-                            {% endif %}
-                                <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
-                                    {{ post.title | escape }}
-                                </a>
-                                {% if site.toc.enabled %}
-                                    {% if page.url == post.url %}
-                                        {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
-                                    {% endif %}
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-
-                        {% if reversed_posts.size > 0 %}
-                            <li class="divider"></li>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
+            {% for label in site.ordered_collections %}
+            {% assign collection = site.collections | where: "label", label | first %}
+            <!-- <p>{{ collection.label }}</p> -->
+            {% if collection.output %}
+            {% if collection.label == "posts" %}
+            {% assign reversed_posts = site[collection.label] | reverse %}
             {% else %}
-                {% for collection in site.collections %}
-                    <!-- <p>{{ collection.label }}</p> -->
-                    {% if collection.output %}
-                        {% if collection.label == "posts" %}
-                            {% assign reversed_posts = site[collection.label] | reverse %}
-                        {% else %}
-                            {% assign reversed_posts = site[collection.label] %}
-                        {% endif %}
+            {% assign reversed_posts = site[collection.label] %}
+            {% endif %}
 
-                        {% for post in reversed_posts %}
-                            {% if page.url == post.url %}
-                            <li class="chapter active" data-level="1.2" data-path="{{site.baseurl}}{{post.url}}">
-                            {% else %}
-                            <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
-                            {% endif %}
-                                <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
-                                    {{ post.title | escape }}
-                                </a>
-                                {% if site.toc.enabled %}
-                                    {% if page.url == post.url %}
-                                        {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
-                                    {% endif %}
-                                {% endif %}
-                            </li>
-                        {% endfor %}
+            {% for post in reversed_posts %}
+            {% if page.url == post.url %}
+            <li class="chapter active" data-level="1.2" data-path="{{site.baseurl}}{{post.url}}">
+                {% else %}
+            <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
+                {% endif %}
+                <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
+                    {{ post.title | escape }}
+                </a>
+                {% if site.toc.enabled %}
+                {% if page.url == post.url %}
+                {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
+                {% endif %}
+                {% endif %}
+            </li>
+            {% endfor %}
 
-                        {% if reversed_posts.size > 0 %}
-                            <li class="divider"></li>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
+            {% if reversed_posts.size > 0 %}
+            <li class="divider"></li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            {% for collection in site.collections %}
+            <!-- <p>{{ collection.label }}</p> -->
+            {% if collection.output %}
+            {% if collection.label == "posts" %}
+            {% assign reversed_posts = site[collection.label] | reverse %}
+            {% else %}
+            {% assign reversed_posts = site[collection.label] %}
+            {% endif %}
+
+            {% for post in reversed_posts %}
+            {% if page.url == post.url %}
+            <li class="chapter active" data-level="1.2" data-path="{{site.baseurl}}{{post.url}}">
+                {% else %}
+            <li class="chapter" data-level="1.1" data-path="{{site.baseurl}}{{post.url}}">
+                {% endif %}
+                <a href="{{site.baseurl}}{{post.url}}" onclick="pageScrollToTop(this)">
+                    {{ post.title | escape }}
+                </a>
+                {% if site.toc.enabled %}
+                {% if page.url == post.url %}
+                {% include toc.html html=content h_min=site.toc.h_min h_max=site.toc.h_max %}
+                {% endif %}
+                {% endif %}
+            </li>
+            {% endfor %}
+
+            {% if reversed_posts.size > 0 %}
+            <li class="divider"></li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
             {% endif %}
         </ul>
     </nav>
