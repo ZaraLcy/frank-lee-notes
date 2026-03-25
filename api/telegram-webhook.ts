@@ -10,6 +10,7 @@ const GITHUB_OWNER = process.env.GITHUB_OWNER || 'ZaraLcy';
 const GITHUB_REPO = process.env.GITHUB_REPO || 'frank-lee-notes';
 const GITHUB_TOKEN = process.env.GH_PAT;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
 
 export default async function handler(
   req: VercelRequest,
@@ -18,6 +19,15 @@ export default async function handler(
   // 只接受 POST 請求
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // 驗證 Telegram Webhook Secret Token
+  if (TELEGRAM_WEBHOOK_SECRET) {
+    const incomingSecret = req.headers['x-telegram-bot-api-secret-token'];
+    if (incomingSecret !== TELEGRAM_WEBHOOK_SECRET) {
+      console.warn('⚠️ Webhook secret 驗證失敗，拒絕請求');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
   }
 
   try {
