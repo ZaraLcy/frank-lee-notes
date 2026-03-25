@@ -2,9 +2,6 @@
    溫馨古典風格 - 法蘭克李的筆記本
    ========================================================================== */
 
-/* 引入 Google Fonts - 思源宋體 (Noto Serif TC) */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap');
-
 /* ==========================================================================
    色彩系統 - 溫暖羊皮紙風格
    ========================================================================== */
@@ -441,6 +438,76 @@
     .markdown-section p {
         font-size: 15px;
     }
+}
+
+/* ==========================================================================
+   首頁文章列表
+   ========================================================================== */
+
+.home-post-list {
+    margin: 1.5em 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.home-post-card {
+    padding: 16px 20px;
+    background: var(--bg-primary);
+    border-left: 3px solid var(--accent-gold);
+    border-radius: 6px;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.home-post-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateX(3px);
+}
+
+.home-post-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-family: var(--font-sans);
+    font-size: 0.82em;
+}
+
+.home-post-date {
+    color: var(--text-muted);
+}
+
+.home-post-category {
+    background: rgba(74, 124, 89, 0.1);
+    color: var(--accent-forest);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.95em;
+}
+
+.home-post-title {
+    font-family: var(--font-serif);
+    font-size: 1.05em;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: none;
+    display: block;
+    margin-bottom: 4px;
+    transition: color 0.2s;
+}
+
+.home-post-title:hover {
+    color: var(--accent-forest);
+    border-bottom: none;
+}
+
+.home-post-excerpt {
+    font-family: var(--font-sans);
+    font-size: 0.88em;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
 }
 
 /* ==========================================================================

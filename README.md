@@ -65,6 +65,26 @@ permalink: /
 
 ---
 
+## 📝 最新文章
+
+<div class="home-post-list">
+{% assign recent_posts = site.posts | reject: "categories", "微誌" | limit: 5 %}
+{% for post in recent_posts %}
+<div class="home-post-card">
+  <div class="home-post-meta">
+    <span class="home-post-date">{{ post.date | date: "%Y.%m.%d" }}</span>
+    {% if post.category %}<span class="home-post-category">{{ post.category }}</span>{% endif %}
+  </div>
+  <a class="home-post-title" href="{{ site.baseurl }}{{ post.url }}">{{ post.title | escape }}</a>
+  {% if post.excerpt %}
+  <p class="home-post-excerpt">{{ post.excerpt | strip_html | truncate: 80 }}</p>
+  {% endif %}
+</div>
+{% endfor %}
+</div>
+
+---
+
 <div style="text-align: center; margin: 2em 0; color: #666; font-style: italic;">
   <p>「學習的樂趣在於探索，而不在於到達。」</p>
   <p style="font-size: 0.9em;">— 這個筆記本會持續更新，就像思考永不停歇 ✨</p>
