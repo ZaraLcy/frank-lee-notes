@@ -155,33 +155,140 @@ fragment_ids:
 
 ## 系統架構
 
+### Telegram 路由
+
+所有 Telegram 訊息進入同一個 webhook，由 webhook 判斷路由：
+
 ```
 Telegram 訊息
      ↓
 api/telegram-webhook.ts
-     ↓ 判斷：有 📖 → quote；否則 → thought
-     ↓
-GitHub Actions: create_fragment.py
-     ↓ 寫入 _fragments/YYYYMMDD-HHMMSS.md
-     ↓
-Jekyll build → 靜態頁面
+     ├─ 訊息以 / 開頭 → 忽略（指令）
+     ├─ 訊息以 📖 開頭 → dispatch event: telegram-fragment（type: quote）
+     └─ 其他 → dispatch event: telegram-fragment（type: thought）
 
-網頁編輯器（/threads/edit）
-     ↓
-api/thread-editor.ts（Vercel）
-     ↓ 讀：GitHub API 取得 _threads/ 和 _fragments/
-     ↓ 寫：GitHub API commit 更新排序 → 觸發 rebuild
+（原有 telegram-micro-post 事件類型移除，統一改為 telegram-fragment）
 ```
+
+**GitHub Actions workflow（新）**：
+
+```yaml
+on:
+  repository_dispatch:
+    types: [telegram-fragment]
+# 執行 scripts/telegram/create_fragment.py
+# 寫入 _fragments/YYYYMMDD-HHMMSSfff.md（含毫秒避免衝突）
+```
+
+原有 `telegram-bot.yml`（micro-post）停用，原功能整合至新的 fragment 流程（微誌動態頁面改為展示所有 `type: thought` 的片段，或維持現有 `_posts/` 並行，待 Phase 2 決定）。
+
+### Fragment ID 格式
+
+使用毫秒時間戳加 4 位隨機碼避免衝突：
+
+```
+20260325-120754-823-a4f2
+```
+
+Front matter 中的 `id` 欄位與檔名一致。Thread 的 `fragment_ids` 使用此完整 ID。
+
+### 網頁編輯器架構
+
+```
+瀏覽器（/threads/edit）
+     ↓ HTTPS
+api/thread-editor.ts（Vercel）
+     ↓ 持有 GH_PAT（server-side，不暴露給瀏覽器）
+GitHub API（讀寫 _threads/ 和 _fragments/）
+```
+
+**認證方式**：編輯器頁面受 `EDITOR_PASSWORD` 環境變數保護（simple password check in Vercel function）。使用者在頁面輸入密碼，Vercel function 驗證後以 session cookie 維持狀態。GitHub token 僅存在 Vercel server-side，不傳至瀏覽器。
+
+**並發衝突處理**：每次 commit 前先取得目標檔案的最新 SHA，若 commit 時 SHA 不符（409 錯誤），向使用者顯示「有新的變更，請重新整理後再儲存」，不靜默覆蓋。
+
+---
+
+## Jekyll Collection 設定
+
+在 `_config.yml` 新增：
+
+```yaml
+collections:
+  pages:
+    output: true
+    permalink: /:collection/:path/
+  others:
+    output: true
+    permalink: /:collection/:path/
+  fragments:
+    output: false          # 片段不需要獨立公開頁面
+  threads:
+    output: true
+    permalink: /脈絡串/:name/
+```
+
+---
+
+## 互動細節補充
+
+### 從脈絡串移除片段
+
+- 滑鼠懸停片段卡片時，右上角顯示 ✕ 按鈕
+- 點擊 ✕ 將該片段從當前脈絡串移除（僅移除引用，不刪除片段本身）
+- 片段仍保留在片段庫中
+
+### 刪除片段
+
+- 在片段庫中，滑鼠懸停顯示「⋯」選單
+- 選單含「刪除片段」選項，確認後從 `_fragments/` 移除檔案
+- 若片段已被脈絡串引用，顯示警告：「此片段被 N 條脈絡串使用，刪除後將從中移除」
+
+### 發布為文章
+
+- 點擊「發布為文章」，在 `_posts/` 建立一篇新 post
+- 內容為脈絡串的標題、描述，加上所有片段依序排列
+- 在 thread front matter 加入 `published_post: <post-slug>` 標記
+- 此為單向操作，不會反向同步
+
+### 分享連結
+
+- 點擊「分享」複製公開 URL 至剪貼簿（`/脈絡串/<slug>`）
+- 顯示「已複製連結」提示
+
+---
+
+## 標籤解析規範
+
+`create_fragment.py` 中的標籤解析需支援中文字符：
+
+```python
+# 正確：使用 Unicode word characters
+tags = re.findall(r'#([\w\u4e00-\u9fff]+)', message)
+
+# 輸入：「真正的謙遜 #道家 #哲學」
+# 輸出：["道家", "哲學"]
+```
+
+`source` 欄位僅在 `type: quote` 時寫入 front matter；`type: thought` 的檔案完全省略 `source` 和 `page` 欄位。
+
+---
+
+## Thread Slug 命名規則
+
+建立新脈絡串時：
+- 編輯器自動以拼音轉換中文標題為 slug（使用 `pypinyin` 套件）
+- 例：「隱修與服務」→ `yin-xiu-yu-fu-wu`
+- 若使用者偏好，可在建立時手動覆寫 slug
 
 ---
 
 ## 新增的工作項目
 
-1. **`_fragments/` 結構與 Jekyll collection 設定**
-2. **`_threads/` 結構與 Jekyll collection 設定**
-3. **Telegram webhook 擴充**：辨識書摘語法，路由至 `create_fragment.py`
-4. **`scripts/telegram/create_fragment.py`**：從 Telegram 訊息建立片段檔案
-5. **`api/thread-editor.ts`**：讀寫 GitHub API 的編輯器後端
+1. **`_config.yml`**：新增 `fragments` 和 `threads` collection 設定
+2. **`api/telegram-webhook.ts`**：移除 micro-post 路由，改為統一 fragment 路由
+3. **`.github/workflows/telegram-fragment.yml`**：新增 fragment 處理 workflow
+4. **`scripts/telegram/create_fragment.py`**：建立片段檔案，支援 quote/thought 辨識與中文標籤
+5. **`api/thread-editor.ts`**：server-side GitHub API proxy，含密碼驗證與 SHA 衝突檢查
 6. **脈絡串編輯器前端**（`/threads/edit`）：左側欄、主區域拖曳排序、右側片段庫抽屜
 7. **公開脈絡串頁面 layout**（`_layouts/thread.html`）：時間軸式片段展示
 8. **`microblog.css` 精緻化**：暖色系細節優化
