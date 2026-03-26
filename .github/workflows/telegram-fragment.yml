@@ -50,8 +50,8 @@ jobs:
             -d "$(jq -n \
               --arg chat_id "${TELEGRAM_CHAT_ID}" \
               --arg text "✅ 片段已收藏至片段庫" \
-              --argjson reply_id "${MESSAGE_ID}" \
-              '{chat_id: $chat_id, text: $text, reply_to_message_id: $reply_id}')"
+              --arg reply_id "${MESSAGE_ID}" \
+              '{chat_id: $chat_id, text: $text, reply_to_message_id: ($reply_id | tonumber)}')"
 
       - name: Send failure notification
         if: failure()
