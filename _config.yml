@@ -59,6 +59,11 @@ collections:
   others:
     output: true
     permalink: /:collection/:path/
+  fragments:
+    output: false
+  threads:
+    output: true
+    permalink: /脈絡串/:name/
 
 ordered_collections:
   - posts
