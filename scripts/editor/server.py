@@ -2,12 +2,10 @@
 """Local thread editor server. Run from repo root: python scripts/editor/server.py"""
 
 import json
-import os
 import re
-import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import urlparse
 
 import yaml  # PyYAML
 
@@ -54,7 +52,7 @@ def read_collection(directory: Path, skip_gitkeep: bool = True) -> list[dict]:
 # ── HTTP handler ─────────────────────────────────────────────────────────────
 
 class EditorHandler(BaseHTTPRequestHandler):
-    def log_message(self, fmt, *args):  # suppress default access log
+    def log_message(self, format, *args):  # suppress default access log  # noqa: A002
         pass
 
     def send_json(self, data: dict, status: int = 200):
