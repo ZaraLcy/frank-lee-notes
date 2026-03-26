@@ -1025,7 +1025,7 @@
       const clampedIdx = Math.max(0, Math.min(atIndex, newIds.length));
       newIds.splice(clampedIdx, 0, fragId);
       thread.fm.fragment_ids = newIds;
-      saveThread();
+      saveThread().catch(() => {});
     }
 
     function removeFragmentFromThread(fragId) {
@@ -1033,7 +1033,7 @@
       if (!thread) return;
       const ids = Array.isArray(thread.fm.fragment_ids) ? thread.fm.fragment_ids : [];
       thread.fm.fragment_ids = ids.filter(id => id !== fragId);
-      saveThread();
+      saveThread().catch(() => {});
     }
 
     function reorderFragment(fromIdx, toIdx) {
@@ -1046,7 +1046,7 @@
       insertAt = Math.max(0, Math.min(insertAt, ids.length));
       ids.splice(insertAt, 0, item);
       thread.fm.fragment_ids = ids;
-      saveThread();
+      saveThread().catch(() => {});
     }
 
     async function saveThread() {
@@ -1133,7 +1133,7 @@
           renderActiveThread();
         }
 
-        input.addEventListener('blur', commit);
+        input.addEventListener('blur', commit, { once: true });
         input.addEventListener('keydown', e => {
           if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
           if (e.key === 'Escape') {
