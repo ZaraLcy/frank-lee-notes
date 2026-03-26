@@ -1,0 +1,67 @@
+name: Telegram Fragment Capture
+
+on:
+  repository_dispatch:
+    types: [telegram-fragment]
+
+jobs:
+  create-fragment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install pytz
+
+      - name: Create fragment
+        env:
+          TELEGRAM_MESSAGE: ${{ github.event.client_payload.message }}
+          TELEGRAM_CHAT_ID: ${{ github.event.client_payload.chat_id }}
+        run: python scripts/telegram/create_fragment.py
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add _fragments/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 1
+          fi
+          FRAG_ID=$(cat fragment_id.txt)
+          git commit -m "📝 New fragment: ${FRAG_ID}"
+          git push
+
+      - name: Send success notification
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ github.event.client_payload.chat_id }}
+          MESSAGE_ID: ${{ github.event.client_payload.message_id }}
+        run: |
+          curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg chat_id "${TELEGRAM_CHAT_ID}" \
+              --arg text "✅ 片段已收藏至片段庫" \
+              --argjson reply_id "${MESSAGE_ID}" \
+              '{chat_id: $chat_id, text: $text, reply_to_message_id: $reply_id}')"
+
+      - name: Send failure notification
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ github.event.client_payload.chat_id }}
+        run: |
+          curl -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg chat_id "${TELEGRAM_CHAT_ID}" \
+              --arg text "❌ 片段收藏失敗，請檢查 GitHub Actions 日誌" \
+              '{chat_id: $chat_id, text: $text}')"
