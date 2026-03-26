@@ -2,11 +2,16 @@
 """Local thread editor server. Run from repo root: python scripts/editor/server.py"""
 
 import json
+import random
 import re
+import string
+from datetime import date, datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
+from typing import Optional
 from urllib.parse import urlparse
 
+import pytz
 import yaml  # PyYAML
 
 REPO_ROOT = Path(__file__).parent.parent.parent
@@ -71,9 +76,15 @@ class EditorHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(content)
 
-    def read_body(self) -> dict:
+    def read_body(self) -> Optional[dict]:
         length = int(self.headers.get('Content-Length', 0))
-        return json.loads(self.rfile.read(length)) if length else {}
+        if not length:
+            return {}
+        try:
+            return json.loads(self.rfile.read(length))
+        except json.JSONDecodeError:
+            self.send_json({'error': 'Invalid JSON body'}, 400)
+            return None
 
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -99,11 +110,16 @@ class EditorHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path.rstrip('/')
         body = self.read_body()
+        if body is None:
+            return  # read_body already sent 400
 
         try:
             if path == '/api/threads/save':
                 slug = body['slug']
                 content = body['content']
+                if not re.match(r'^[a-z0-9\-]+$', slug):
+                    self.send_json({'error': 'Invalid slug'}, 400)
+                    return
                 target = THREADS_DIR / f'{slug}.md'
                 target.write_text(content, encoding='utf-8')
                 self.send_json({'ok': True})
@@ -120,10 +136,6 @@ class EditorHandler(BaseHTTPRequestHandler):
                 self.send_json({'ok': True})
 
             elif path == '/api/fragments/create':
-                # Create a new fragment from the editor (not Telegram)
-                import random, string
-                from datetime import datetime
-                import pytz
                 tz = pytz.timezone('Asia/Taipei')
                 now = datetime.now(tz)
                 ms = now.microsecond // 1000
@@ -162,7 +174,6 @@ class EditorHandler(BaseHTTPRequestHandler):
                 if not re.match(r'^[a-z0-9\-]+$', slug):
                     self.send_json({'error': 'Invalid slug'}, 400)
                     return
-                from datetime import date
                 today = date.today().isoformat()
                 fm = {'title': title, 'description': description,
                       'layout': 'thread', 'created': today, 'updated': today,
