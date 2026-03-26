@@ -54,62 +54,40 @@ export default async function handler(
 
     console.log(`收到訊息：${messageText}`);
 
-    // 觸發 GitHub Actions
-    const githubResponse = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`,
-      {
+    // 同時觸發 micro-post 和 fragment 兩個工作流（真正並行）
+    const dispatchUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`;
+    const dispatchHeaders = {
+      'Authorization': `token ${GITHUB_TOKEN}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+    };
+    const basePayload = { message: messageText, chat_id: chatId, message_id: messageId };
+
+    const [githubResponse, fragmentResponse] = await Promise.all([
+      fetch(dispatchUrl, {
         method: 'POST',
-        headers: {
-          'Authorization': `token ${GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          event_type: 'telegram-micro-post',
-          client_payload: {
-            message: messageText,
-            chat_id: chatId,
-            message_id: messageId,
-          },
-        }),
-      }
-    );
+        headers: dispatchHeaders,
+        body: JSON.stringify({ event_type: 'telegram-micro-post', client_payload: basePayload }),
+      }),
+      fetch(dispatchUrl, {
+        method: 'POST',
+        headers: dispatchHeaders,
+        body: JSON.stringify({ event_type: 'telegram-fragment', client_payload: basePayload }),
+      }),
+    ]);
 
     if (!githubResponse.ok) {
       const errorText = await githubResponse.text();
-      console.error('GitHub API 錯誤：', errorText);
+      console.error('GitHub API 錯誤（micro-post）：', errorText);
       throw new Error(`GitHub API error: ${githubResponse.status}`);
     }
 
-    console.log('✅ GitHub Actions 已觸發（micro-post）');
-
-    // 同時觸發片段收藏（telegram-fragment），與 micro-post 並行
-    const fragmentResponse = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `token ${GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          event_type: 'telegram-fragment',
-          client_payload: {
-            message: messageText,
-            chat_id: chatId,
-            message_id: messageId,
-          },
-        }),
-      }
-    );
-
     if (!fragmentResponse.ok) {
-      console.error('Fragment dispatch 失敗：', await fragmentResponse.text());
+      console.error(`Fragment dispatch 失敗 [${fragmentResponse.status}]：`, await fragmentResponse.text());
       // 非致命錯誤，不中斷主流程
-    } else {
-      console.log('✅ GitHub Actions 已觸發（telegram-fragment）');
     }
+
+    console.log('✅ GitHub Actions 已觸發（micro-post + telegram-fragment）');
 
     // 發送即時反饋給用戶
     await fetch(
