@@ -10,6 +10,8 @@ const GITHUB_OWNER = process.env.GITHUB_OWNER || 'ZaraLcy';
 const GITHUB_REPO = process.env.GITHUB_REPO || 'frank-lee-notes';
 const GITHUB_TOKEN = process.env.GH_PAT;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_SECRET_TOKEN = process.env.TELEGRAM_WEBHOOK_SECRET;
+const ALLOWED_CHAT_ID = process.env.TELEGRAM_ALLOWED_CHAT_ID;
 
 export default async function handler(
   req: VercelRequest,
@@ -18,6 +20,12 @@ export default async function handler(
   // 只接受 POST 請求
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // 驗證 Telegram Secret Token
+  const incomingSecret = req.headers['x-telegram-bot-api-secret-token'];
+  if (!TELEGRAM_SECRET_TOKEN || incomingSecret !== TELEGRAM_SECRET_TOKEN) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {
@@ -32,6 +40,12 @@ export default async function handler(
     const chatId = message.chat.id;
     const messageText = message.text;
     const messageId = message.message_id;
+
+    // 驗證 Chat ID 白名單
+    if (!ALLOWED_CHAT_ID || String(chatId) !== ALLOWED_CHAT_ID) {
+      console.warn(`拒絕未授權的 chat_id: ${chatId}`);
+      return res.status(200).json({ ok: true }); // 回傳 200 避免 Telegram 重試
+    }
 
     // 忽略指令訊息（如 /start）
     if (messageText.startsWith('/')) {
@@ -67,7 +81,35 @@ export default async function handler(
       throw new Error(`GitHub API error: ${githubResponse.status}`);
     }
 
-    console.log('✅ GitHub Actions 已觸發');
+    console.log('✅ GitHub Actions 已觸發（micro-post）');
+
+    // 同時觸發片段收藏（telegram-fragment），與 micro-post 並行
+    const fragmentResponse = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          event_type: 'telegram-fragment',
+          client_payload: {
+            message: messageText,
+            chat_id: chatId,
+            message_id: messageId,
+          },
+        }),
+      }
+    );
+
+    if (!fragmentResponse.ok) {
+      console.error('Fragment dispatch 失敗：', await fragmentResponse.text());
+      // 非致命錯誤，不中斷主流程
+    } else {
+      console.log('✅ GitHub Actions 已觸發（telegram-fragment）');
+    }
 
     // 發送即時反饋給用戶
     await fetch(
