@@ -31,12 +31,13 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add _fragments/
           if git diff --staged --quiet; then
-            echo "No changes to commit"
-            exit 1
+            echo "No changes to commit (fragment already exists)"
+            exit 0
           fi
           FRAG_ID=$(cat fragment_id.txt)
           git commit -m "📝 New fragment: ${FRAG_ID}"
           git push
+          rm -f fragment_id.txt
 
       - name: Send success notification
         if: success()
