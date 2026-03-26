@@ -1056,6 +1056,7 @@
       thread.raw = newRaw;
       try {
         await apiFetch('POST', '/api/threads/save', { slug: thread.slug, content: newRaw });
+        showToast('✅ 已儲存');
         renderFragmentList();
         renderThreadList();
         const meta = document.getElementById('threadMeta');
@@ -1075,8 +1076,8 @@
       // Derive slug from title (Latin chars) or timestamp fallback
       const baseSlug = titleTrimmed
         .toLowerCase()
-        .replace(/[^\x00-\x7F]+/g, '-')
-        .replace(/[^a-z0-9\-]/g, '')
+        .replace(/[^\x00-\x7F]+/g, '-')   // non-ASCII → dash
+        .replace(/[^a-z0-9]+/g, '-')       // remaining non-alphanum → dash
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '');
       const slug = baseSlug || 'thread-' + Date.now().toString(36);
