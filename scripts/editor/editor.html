@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>脈絡串編輯器</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #fffbf5;
+      color: #3d2b1f;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────── */
+    #app {
+      display: flex;
+      flex: 1;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────────── */
+    .sidebar {
+      width: 180px;
+      min-width: 180px;
+      background: #faf5ef;
+      border-right: 1px solid #f0e6dc;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 16px 12px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #a0826d;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid #f0e6dc;
+    }
+
+    .thread-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 6px;
+    }
+
+    .thread-item {
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 2px;
+      transition: background 0.12s;
+    }
+
+    .thread-item:hover { background: #f0e6dc; }
+
+    .thread-item.active {
+      background: #ffffff;
+      border: 1px solid #d4a574;
+      box-shadow: 0 1px 4px rgba(139,90,60,0.08);
+    }
+
+    .thread-item-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #3d2b1f;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .thread-item.active .thread-item-title { color: #8b5a3c; }
+
+    .thread-item-count {
+      font-size: 11px;
+      color: #b8977e;
+      margin-top: 2px;
+    }
+
+    .sidebar-footer {
+      padding: 10px 6px;
+      border-top: 1px solid #f0e6dc;
+    }
+
+    .btn-new-thread {
+      width: 100%;
+      padding: 8px 10px;
+      background: transparent;
+      border: 1px dashed #d4a574;
+      border-radius: 6px;
+      color: #8b5a3c;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.12s, border-color 0.12s;
+    }
+
+    .btn-new-thread:hover {
+      background: #f5ebe0;
+      border-color: #c67d4e;
+    }
+
+    /* ── Main Area ───────────────────────────────────────────────── */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .main-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid #f0e6dc;
+      background: #fffbf5;
+      flex-shrink: 0;
+    }
+
+    .main-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .thread-title-wrap { flex: 1; min-width: 0; }
+
+    .thread-title-display {
+      font-family: Georgia, serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #3d2b1f;
+      cursor: text;
+      padding: 2px 4px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: border-color 0.12s;
+      word-break: break-word;
+    }
+
+    .thread-title-display:hover { border-color: #f0e6dc; }
+
+    .thread-title-input {
+      font-family: Georgia, serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #3d2b1f;
+      border: 1px solid #d4a574;
+      border-radius: 4px;
+      padding: 2px 4px;
+      width: 100%;
+      background: #fffbf5;
+      outline: none;
+    }
+
+    .thread-desc {
+      font-size: 13px;
+      color: #a0826d;
+      margin-top: 4px;
+      padding: 2px 4px;
+      cursor: text;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: border-color 0.12s;
+    }
+
+    .thread-desc:hover { border-color: #f0e6dc; }
+
+    .thread-desc-input {
+      font-size: 13px;
+      color: #a0826d;
+      border: 1px solid #d4a574;
+      border-radius: 4px;
+      padding: 2px 4px;
+      width: 100%;
+      background: #fffbf5;
+      outline: none;
+    }
+
+    .thread-meta {
+      font-size: 11px;
+      color: #b8977e;
+      margin-top: 4px;
+      padding-left: 4px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.12s, color 0.12s;
+      white-space: nowrap;
+    }
+
+    .btn-primary { background: #8b5a3c; color: #fff; }
+    .btn-primary:hover { background: #7a4e33; }
+
+    .btn-secondary {
+      background: #f5ebe0;
+      color: #8b5a3c;
+      border: 1px solid #d4a574;
+    }
+    .btn-secondary:hover { background: #edddd0; }
+
+    .btn-ghost {
+      background: transparent;
+      color: #8b5a3c;
+      border: 1px solid #f0e6dc;
+    }
+    .btn-ghost:hover { background: #f5ebe0; border-color: #d4a574; }
+
+    /* ── Fragment List ───────────────────────────────────────────── */
+    .fragment-list-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #b8977e;
+    }
+
+    .empty-state-icon { font-size: 32px; margin-bottom: 12px; }
+    .empty-state-text { font-size: 14px; margin-bottom: 6px; }
+    .empty-state-hint { font-size: 12px; color: #c9a98a; }
+
+    .no-thread-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      flex-direction: column;
+      gap: 12px;
+      color: #b8977e;
+      padding: 40px;
+    }
+
+    .drop-zone {
+      height: 6px;
+      border-radius: 3px;
+      margin: 2px 0;
+      transition: height 0.12s, background 0.12s;
+    }
+
+    .drop-zone.drag-over {
+      height: 28px;
+      background: #f5ebe0;
+      border: 2px dashed #d4a574;
+    }
+
+    .fragment-card {
+      background: #fff;
+      border: 1px solid #f0e6dc;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      position: relative;
+      transition: box-shadow 0.12s, border-color 0.12s;
+    }
+
+    .fragment-card:hover {
+      border-color: #d4a574;
+      box-shadow: 0 1px 4px rgba(139,90,60,0.08);
+    }
+
+    .fragment-card.dragging { opacity: 0.4; }
+
+    .drag-handle {
+      color: #c9a98a;
+      font-size: 16px;
+      cursor: grab;
+      padding: 2px 0;
+      line-height: 1;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .drag-handle:active { cursor: grabbing; }
+
+    .fragment-card-body { flex: 1; min-width: 0; }
+
+    .fragment-type-label {
+      font-size: 11px;
+      color: #a0826d;
+      margin-bottom: 4px;
+    }
+
+    .fragment-preview {
+      font-family: Georgia, serif;
+      font-size: 13px;
+      color: #3d2b1f;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .fragment-card-remove {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      color: #c9a98a;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.12s, color 0.12s, background 0.12s;
+      line-height: 1;
+    }
+
+    .fragment-card:hover .fragment-card-remove { opacity: 1; }
+
+    .fragment-card-remove:hover {
+      color: #c0392b;
+      background: #fdecea;
+    }
+
+    /* ── Library Drawer ──────────────────────────────────────────── */
+    .library-drawer {
+      width: 220px;
+      min-width: 220px;
+      background: #fff;
+      border-left: 2px solid #d4a574;
+      box-shadow: -4px 0 12px rgba(139,90,60,0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: width 0.2s, min-width 0.2s;
+    }
+
+    .library-drawer.hidden {
+      width: 0;
+      min-width: 0;
+      border-left: none;
+      box-shadow: none;
+    }
+
+    .library-header {
+      padding: 14px 12px 10px;
+      border-bottom: 1px solid #f0e6dc;
+      flex-shrink: 0;
+    }
+
+    .library-header-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8b5a3c;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .library-search {
+      width: 100%;
+      padding: 5px 8px;
+      border: 1px solid #f0e6dc;
+      border-radius: 6px;
+      font-size: 12px;
+      background: #fffbf5;
+      color: #3d2b1f;
+      outline: none;
+      transition: border-color 0.12s;
+    }
+
+    .library-search:focus { border-color: #d4a574; }
+
+    .library-tabs {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .library-tab {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      border: 1px solid #f0e6dc;
+      background: transparent;
+      color: #a0826d;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+    }
+
+    .library-tab.active {
+      background: #8b5a3c;
+      color: #fff;
+      border-color: #8b5a3c;
+    }
+
+    .library-tab:hover:not(.active) {
+      background: #f5ebe0;
+      border-color: #d4a574;
+    }
+
+    .library-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 8px 4px;
+    }
+
+    .lib-fragment-card {
+      background: #fffbf5;
+      border: 1px solid #f0e6dc;
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      cursor: grab;
+      transition: border-color 0.12s, box-shadow 0.12s, opacity 0.12s;
+    }
+
+    .lib-fragment-card:hover {
+      border-color: #d4a574;
+      box-shadow: 0 1px 4px rgba(139,90,60,0.08);
+    }
+
+    .lib-fragment-card.already-in-thread {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .lib-fragment-card.drag-over {
+      border-color: #c67d4e;
+      box-shadow: 0 0 0 2px rgba(198,125,78,0.2);
+    }
+
+    .lib-fragment-preview {
+      font-family: Georgia, serif;
+      font-size: 12px;
+      color: #3d2b1f;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .lib-fragment-meta {
+      font-size: 10px;
+      color: #b8977e;
+      margin-bottom: 4px;
+    }
+
+    .badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-top: 4px;
+    }
+
+    .badge {
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    .badge-current { background: #8b5a3c; color: #fff; }
+    .badge-other { background: #f5ebe0; color: #a0826d; border: 1px solid #d4a574; }
+    .badge-unassigned { color: #b8977e; border: 1px dashed #d4a574; }
+
+    .lib-fragment-actions {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .btn-lib-add {
+      font-size: 10px;
+      padding: 2px 6px;
+      background: #8b5a3c;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .btn-lib-add:hover { background: #7a4e33; }
+
+    .btn-lib-delete {
+      font-size: 10px;
+      padding: 2px 6px;
+      background: transparent;
+      color: #c0392b;
+      border: 1px solid #f0e6dc;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+    }
+
+    .btn-lib-delete:hover { background: #fdecea; border-color: #e17a72; }
+
+    .library-footer {
+      padding: 8px;
+      border-top: 1px solid #f0e6dc;
+      flex-shrink: 0;
+    }
+
+    .btn-new-fragment {
+      width: 100%;
+      padding: 7px 10px;
+      background: transparent;
+      border: 1px dashed #d4a574;
+      border-radius: 6px;
+      color: #8b5a3c;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.12s, border-color 0.12s;
+    }
+
+    .btn-new-fragment:hover { background: #f5ebe0; border-color: #c67d4e; }
+
+    /* ── New Fragment Form ──────────────────────────────────────── */
+    .new-fragment-form {
+      background: #fffbf5;
+      border: 1px solid #d4a574;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+
+    .new-fragment-form select,
+    .new-fragment-form input,
+    .new-fragment-form textarea {
+      width: 100%;
+      padding: 4px 6px;
+      border: 1px solid #f0e6dc;
+      border-radius: 4px;
+      font-size: 12px;
+      background: #fff;
+      color: #3d2b1f;
+      outline: none;
+      margin-bottom: 4px;
+      font-family: inherit;
+    }
+
+    .new-fragment-form select:focus,
+    .new-fragment-form input:focus,
+    .new-fragment-form textarea:focus { border-color: #d4a574; }
+
+    .new-fragment-form textarea {
+      resize: vertical;
+      min-height: 60px;
+      font-family: Georgia, serif;
+    }
+
+    .new-fragment-form-actions {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .btn-form-submit {
+      flex: 1;
+      padding: 4px 8px;
+      background: #8b5a3c;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .btn-form-submit:hover { background: #7a4e33; }
+
+    .btn-form-cancel {
+      padding: 4px 8px;
+      background: transparent;
+      color: #a0826d;
+      border: 1px solid #f0e6dc;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .btn-form-cancel:hover { background: #f5ebe0; }
+
+    /* ── Toast ──────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #8b5a3c;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      box-shadow: 0 4px 16px rgba(139,90,60,0.25);
+      z-index: 9999;
+      transition: opacity 0.3s;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #toast.show { opacity: 1; }
+    #toast.error { background: #c0392b; }
+
+    /* ── Scrollbars ─────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #e0cfc3; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #c9a98a; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">脈絡串</div>
+      <div class="thread-list" id="threadList"></div>
+      <div class="sidebar-footer">
+        <button class="btn-new-thread" id="btnNewThread">＋ 新增脈絡串</button>
+      </div>
+    </div>
+
+    <!-- Main Area -->
+    <div class="main-area">
+      <div id="mainHeader" class="main-header" style="display:none">
+        <div class="main-header-top">
+          <div class="thread-title-wrap">
+            <div class="thread-title-display" id="threadTitleDisplay"></div>
+            <div class="thread-desc" id="threadDescDisplay"></div>
+            <div class="thread-meta" id="threadMeta"></div>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-ghost" id="btnPublish">發布</button>
+            <button class="btn btn-secondary" id="btnShare">分享</button>
+            <button class="btn btn-secondary" id="btnToggleLibrary">片段庫 ▶</button>
+          </div>
+        </div>
+      </div>
+      <div id="mainContent" class="no-thread-state">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Library Drawer -->
+    <div class="library-drawer hidden" id="libraryDrawer">
+      <div class="library-header">
+        <div class="library-header-title">片段庫</div>
+        <input class="library-search" id="librarySearch" type="text" placeholder="搜尋片段…" />
+        <div class="library-tabs" id="libraryTabs">
+          <button class="library-tab active" data-filter="all">全部</button>
+          <button class="library-tab" data-filter="quote">書摘</button>
+          <button class="library-tab" data-filter="thought">想法</button>
+        </div>
+      </div>
+      <div class="library-list" id="libraryList"></div>
+      <div class="library-footer">
+        <button class="btn-new-fragment" id="btnNewFragment">＋ 新增片段</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    // ── State ──────────────────────────────────────────────────────────────────
+    const state = {
+      threads: [],
+      fragments: [],
+      activeSlug: null,
+      libraryOpen: false,
+      libraryFilter: 'all',
+      libraryQuery: '',
+      draggingFromIdx: null,
+      draggingFragId: null,
+    };
+
+    // ── Front Matter Helpers ───────────────────────────────────────────────────
+    function parseFrontMatter(raw) {
+      if (!raw.startsWith('---')) return { fm: {}, body: raw };
+      const parts = raw.split('---');
+      if (parts.length < 3) return { fm: {}, body: raw };
+      const fm = {};
+      const yamlBlock = parts[1];
+      yamlBlock.split('\n').forEach(line => {
+        const m = line.match(/^(\w[\w_]*):\s*(.+)/);
+        if (!m) return;
+        const [, key, val] = m;
+        if (val.startsWith('[') || val.trim() === '') return;
+        fm[key] = val.replace(/^["']|["']$/g, '').trim();
+      });
+      const listMatch = yamlBlock.match(/fragment_ids:\n((?:[ \t]+-[^\n]*\n?)*)/);
+      if (listMatch) {
+        fm.fragment_ids = listMatch[1].trim().split('\n')
+          .map(l => l.replace(/^\s*-\s*/, '').trim()).filter(Boolean);
+      } else if (/fragment_ids:\s*\[\]/.test(yamlBlock)) {
+        fm.fragment_ids = [];
+      } else if (!('fragment_ids' in fm)) {
+        fm.fragment_ids = [];
+      }
+      return { fm, body: parts.slice(2).join('---').trim() };
+    }
+
+    function buildFrontMatter(fm, body) {
+      const lines = ['---'];
+      Object.entries(fm).forEach(([k, v]) => {
+        if (k === 'fragment_ids') {
+          lines.push('fragment_ids:');
+          (v || []).forEach(id => lines.push('  - ' + id));
+        } else {
+          lines.push(k + ': "' + String(v).replace(/"/g, '\\"') + '"');
+        }
+      });
+      lines.push('---', '', body || '');
+      return lines.join('\n');
+    }
+
+    // ── API ────────────────────────────────────────────────────────────────────
+    async function apiFetch(method, path, body) {
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body !== undefined) opts.body = JSON.stringify(body);
+      const res = await fetch(path, opts);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: res.statusText }));
+        throw new Error(err.error || res.statusText);
+      }
+      return res.json();
+    }
+
+    // ── Toast ──────────────────────────────────────────────────────────────────
+    let _toastTimer = null;
+    function showToast(msg, isErr) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = isErr ? 'show error' : 'show';
+      if (_toastTimer) clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => { el.className = ''; }, 2500);
+    }
+
+    // ── DOM helpers ────────────────────────────────────────────────────────────
+    function clearChildren(el) {
+      while (el.firstChild) el.removeChild(el.firstChild);
+    }
+
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+
+    // ── Load ───────────────────────────────────────────────────────────────────
+    async function loadAll() {
+      try {
+        const [tRes, fRes] = await Promise.all([
+          apiFetch('GET', '/api/threads'),
+          apiFetch('GET', '/api/fragments'),
+        ]);
+        state.threads = tRes.threads || [];
+        state.fragments = fRes.fragments || [];
+        renderThreadList();
+        if (state.activeSlug) {
+          const still = state.threads.find(t => t.slug === state.activeSlug);
+          if (still) {
+            renderActiveThread();
+          } else {
+            state.activeSlug = null;
+            renderNoThread();
+          }
+        } else {
+          renderNoThread();
+        }
+        if (state.libraryOpen) renderLibrary(state.libraryQuery);
+      } catch (e) {
+        showToast('載入失敗：' + e.message, true);
+      }
+    }
+
+    // ── Thread List (sidebar) ──────────────────────────────────────────────────
+    function renderThreadList() {
+      const list = document.getElementById('threadList');
+      clearChildren(list);
+      if (state.threads.length === 0) {
+        const empty = el('div', null, '尚無脈絡串');
+        empty.style.cssText = 'padding:20px 10px;text-align:center;font-size:12px;color:#b8977e;';
+        list.appendChild(empty);
+        return;
+      }
+      state.threads.forEach(t => {
+        const item = el('div', 'thread-item' + (t.slug === state.activeSlug ? ' active' : ''));
+        item.dataset.slug = t.slug;
+
+        const titleEl = el('div', 'thread-item-title');
+        titleEl.textContent = (t.fm && t.fm.title) ? t.fm.title : t.slug;
+
+        const ids = (t.fm && Array.isArray(t.fm.fragment_ids)) ? t.fm.fragment_ids : [];
+        const countEl = el('div', 'thread-item-count', ids.length + ' 個片段');
+
+        item.appendChild(titleEl);
+        item.appendChild(countEl);
+        item.addEventListener('click', () => selectThread(t.slug));
+        list.appendChild(item);
+      });
+    }
+
+    // ── Select Thread ──────────────────────────────────────────────────────────
+    function selectThread(slug) {
+      state.activeSlug = slug;
+      renderThreadList();
+      renderActiveThread();
+      if (state.libraryOpen) renderLibrary(state.libraryQuery);
+    }
+
+    function getActiveThread() {
+      return state.threads.find(t => t.slug === state.activeSlug) || null;
+    }
+
+    // ── Main: no thread ────────────────────────────────────────────────────────
+    function renderNoThread() {
+      document.getElementById('mainHeader').style.display = 'none';
+      const content = document.getElementById('mainContent');
+      content.className = 'no-thread-state';
+      content.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;';
+      clearChildren(content);
+
+      const icon = el('div', null, '📚');
+      icon.style.fontSize = '32px';
+      const hint = el('div', null, '選擇左側脈絡串，或新增一個');
+      hint.style.cssText = 'font-size:14px;color:#a0826d;';
+      content.appendChild(icon);
+      content.appendChild(hint);
+    }
+
+    // ── Main: active thread ────────────────────────────────────────────────────
+    function renderActiveThread() {
+      const thread = getActiveThread();
+      if (!thread) { renderNoThread(); return; }
+
+      // Show header
+      const header = document.getElementById('mainHeader');
+      header.style.display = 'block';
+
+      const fm = thread.fm || {};
+      const title = fm.title || thread.slug;
+      const desc = fm.description || '';
+      const ids = Array.isArray(fm.fragment_ids) ? fm.fragment_ids : [];
+
+      // Title
+      const titleDisplay = document.getElementById('threadTitleDisplay');
+      titleDisplay.textContent = title;
+
+      // Description
+      const descDisplay = document.getElementById('threadDescDisplay');
+      descDisplay.textContent = desc || '點擊新增描述…';
+      descDisplay.style.color = desc ? '#a0826d' : '#c9a98a';
+
+      // Meta
+      document.getElementById('threadMeta').textContent = ids.length + ' 個片段';
+
+      // Main content area becomes fragment list
+      const content = document.getElementById('mainContent');
+      content.className = '';
+      content.style.cssText = 'flex:1;display:flex;flex-direction:column;overflow:hidden;';
+
+      // Create or reuse fragment list wrap
+      let wrap = document.getElementById('fragmentListWrap');
+      if (!wrap) {
+        wrap = el('div', 'fragment-list-wrap');
+        wrap.id = 'fragmentListWrap';
+        content.appendChild(wrap);
+      }
+
+      renderFragmentList();
+      setupInlineEdits();
+    }
+
+    // ── Fragment List ──────────────────────────────────────────────────────────
+    function renderFragmentList() {
+      const wrap = document.getElementById('fragmentListWrap');
+      if (!wrap) return;
+      clearChildren(wrap);
+
+      const thread = getActiveThread();
+      if (!thread) return;
+      const ids = Array.isArray(thread.fm.fragment_ids) ? thread.fm.fragment_ids : [];
+
+      // Always a drop zone at position 0
+      wrap.appendChild(createDropZone(0));
+
+      if (ids.length === 0) {
+        const empty = el('div', 'empty-state');
+        empty.appendChild(el('div', 'empty-state-icon', '🧩'));
+        empty.appendChild(el('div', 'empty-state-text', '此脈絡串尚無片段'));
+        empty.appendChild(el('div', 'empty-state-hint', '從右側片段庫拖曳或點擊「＋」加入片段'));
+        wrap.appendChild(empty);
+        return;
+      }
+
+      ids.forEach((fragId, idx) => {
+        const frag = state.fragments.find(f => f.fm && f.fm.id === fragId) || null;
+        wrap.appendChild(buildFragmentCard(frag, fragId, idx));
+        wrap.appendChild(createDropZone(idx + 1));
+      });
+    }
+
+    function createDropZone(targetIdx) {
+      const dz = el('div', 'drop-zone');
+      dz.dataset.targetIdx = targetIdx;
+
+      dz.addEventListener('dragover', e => {
+        e.preventDefault();
+        dz.classList.add('drag-over');
+      });
+      dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+      dz.addEventListener('drop', e => {
+        e.preventDefault();
+        dz.classList.remove('drag-over');
+        if (state.draggingFromIdx !== null) {
+          reorderFragment(state.draggingFromIdx, targetIdx);
+          state.draggingFromIdx = null;
+        } else if (state.draggingFragId !== null) {
+          addFragmentToThread(state.draggingFragId, targetIdx);
+          state.draggingFragId = null;
+        }
+      });
+      return dz;
+    }
+
+    function buildFragmentCard(frag, fragId, idx) {
+      const card = el('div', 'fragment-card');
+      card.draggable = true;
+
+      card.addEventListener('dragstart', () => {
+        state.draggingFromIdx = idx;
+        state.draggingFragId = null;
+        setTimeout(() => card.classList.add('dragging'), 0);
+      });
+      card.addEventListener('dragend', () => {
+        card.classList.remove('dragging');
+        state.draggingFromIdx = null;
+      });
+
+      // Drag handle
+      const handle = el('div', 'drag-handle', '⠿');
+      handle.title = '拖曳排序';
+      card.appendChild(handle);
+
+      // Body
+      const body = el('div', 'fragment-card-body');
+
+      // Type label
+      const typeLabel = el('div', 'fragment-type-label');
+      if (frag) {
+        const fm = frag.fm || {};
+        const type = fm.type || 'thought';
+        if (type === 'quote') {
+          typeLabel.textContent = '📖 ' + (fm.source ? String(fm.source) : '書摘');
+          if (fm.page) {
+            const pg = el('span', null, ' p.' + String(fm.page));
+            pg.style.color = '#c9a98a';
+            typeLabel.appendChild(pg);
+          }
+        } else {
+          const dateStr = fm.date ? String(fm.date).slice(0, 10) : '想法';
+          typeLabel.textContent = '✏️ ' + dateStr;
+        }
+      } else {
+        typeLabel.textContent = '⚠️ 找不到此片段';
+        typeLabel.style.color = '#e17a72';
+      }
+      body.appendChild(typeLabel);
+
+      // Preview
+      const preview = el('div', 'fragment-preview');
+      if (frag) {
+        preview.textContent = frag.body || '（無內容）';
+      } else {
+        preview.style.color = '#c9a98a';
+        preview.textContent = fragId;
+      }
+      body.appendChild(preview);
+      card.appendChild(body);
+
+      // Remove button
+      const removeBtn = el('button', 'fragment-card-remove', '✕');
+      removeBtn.title = '從此串移除';
+      removeBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        removeFragmentFromThread(fragId);
+      });
+      card.appendChild(removeBtn);
+
+      return card;
+    }
+
+    // ── Thread Operations ──────────────────────────────────────────────────────
+    function addFragmentToThread(fragId, atIndex) {
+      const thread = getActiveThread();
+      if (!thread) return;
+      const ids = Array.isArray(thread.fm.fragment_ids) ? thread.fm.fragment_ids : [];
+      if (ids.includes(fragId)) { showToast('此片段已在脈絡串中'); return; }
+      const newIds = ids.slice();
+      const clampedIdx = Math.max(0, Math.min(atIndex, newIds.length));
+      newIds.splice(clampedIdx, 0, fragId);
+      thread.fm.fragment_ids = newIds;
+      saveThread();
+    }
+
+    function removeFragmentFromThread(fragId) {
+      const thread = getActiveThread();
+      if (!thread) return;
+      const ids = Array.isArray(thread.fm.fragment_ids) ? thread.fm.fragment_ids : [];
+      thread.fm.fragment_ids = ids.filter(id => id !== fragId);
+      saveThread();
+    }
+
+    function reorderFragment(fromIdx, toIdx) {
+      const thread = getActiveThread();
+      if (!thread) return;
+      const ids = (Array.isArray(thread.fm.fragment_ids) ? thread.fm.fragment_ids : []).slice();
+      if (fromIdx < 0 || fromIdx >= ids.length) return;
+      const item = ids.splice(fromIdx, 1)[0];
+      let insertAt = toIdx > fromIdx ? toIdx - 1 : toIdx;
+      insertAt = Math.max(0, Math.min(insertAt, ids.length));
+      ids.splice(insertAt, 0, item);
+      thread.fm.fragment_ids = ids;
+      saveThread();
+    }
+
+    async function saveThread() {
+      const thread = getActiveThread();
+      if (!thread) return;
+      const newRaw = buildFrontMatter(thread.fm, thread.body || '');
+      thread.raw = newRaw;
+      try {
+        await apiFetch('POST', '/api/threads/save', { slug: thread.slug, content: newRaw });
+        renderFragmentList();
+        renderThreadList();
+        const meta = document.getElementById('threadMeta');
+        if (meta) meta.textContent = (thread.fm.fragment_ids || []).length + ' 個片段';
+        if (state.libraryOpen) renderLibrary(state.libraryQuery);
+      } catch (e) {
+        showToast('儲存失敗：' + e.message, true);
+        await loadAll();
+      }
+    }
+
+    async function createThread() {
+      const title = prompt('脈絡串標題：');
+      if (!title || !title.trim()) return;
+      const titleTrimmed = title.trim();
+
+      // Derive slug from title (Latin chars) or timestamp fallback
+      const baseSlug = titleTrimmed
+        .toLowerCase()
+        .replace(/[^\x00-\x7F]+/g, '-')
+        .replace(/[^a-z0-9\-]/g, '')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+      const slug = baseSlug || 'thread-' + Date.now().toString(36);
+
+      const description = prompt('描述（可留空）：') || '';
+
+      try {
+        await apiFetch('POST', '/api/threads/create', { slug, title: titleTrimmed, description });
+        showToast('脈絡串已建立');
+        await loadAll();
+        selectThread(slug);
+      } catch (e) {
+        showToast('建立失敗：' + e.message, true);
+      }
+    }
+
+    // ── Inline Edit ────────────────────────────────────────────────────────────
+    function setupInlineEdits() {
+      setupInlineEdit('threadTitleDisplay', 'thread-title-input', 'title');
+      setupInlineEdit('threadDescDisplay', 'thread-desc-input', 'description');
+    }
+
+    function setupInlineEdit(displayId, inputClass, field) {
+      const display = document.getElementById(displayId);
+      if (!display || display._inlineEditBound) return;
+      display._inlineEditBound = true;
+
+      display.addEventListener('click', function onTitleClick() {
+        const thread = getActiveThread();
+        if (!thread) return;
+
+        const input = document.createElement('input');
+        input.className = inputClass;
+        input.type = 'text';
+        input.value = (thread.fm && thread.fm[field]) ? String(thread.fm[field]) : '';
+        display.replaceWith(input);
+        input.focus();
+        input.select();
+
+        async function commit() {
+          const newVal = input.value.trim();
+          if (newVal !== String(thread.fm[field] || '')) {
+            thread.fm[field] = newVal;
+            try {
+              const newRaw = buildFrontMatter(thread.fm, thread.body || '');
+              thread.raw = newRaw;
+              await apiFetch('POST', '/api/threads/save', { slug: thread.slug, content: newRaw });
+              renderThreadList();
+            } catch (e) {
+              showToast('儲存失敗：' + e.message, true);
+            }
+          }
+          renderActiveThread();
+        }
+
+        input.addEventListener('blur', commit);
+        input.addEventListener('keydown', e => {
+          if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+          if (e.key === 'Escape') {
+            input.removeEventListener('blur', commit);
+            renderActiveThread();
+          }
+        });
+      });
+    }
+
+    // ── Library ────────────────────────────────────────────────────────────────
+    function toggleLibrary() {
+      state.libraryOpen = !state.libraryOpen;
+      const drawer = document.getElementById('libraryDrawer');
+      const btn = document.getElementById('btnToggleLibrary');
+      if (state.libraryOpen) {
+        drawer.classList.remove('hidden');
+        btn.textContent = '片段庫 ◀';
+        renderLibrary(state.libraryQuery);
+      } else {
+        drawer.classList.add('hidden');
+        btn.textContent = '片段庫 ▶';
+      }
+    }
+
+    function renderLibrary(q) {
+      state.libraryQuery = q || '';
+      const list = document.getElementById('libraryList');
+      clearChildren(list);
+
+      const thread = getActiveThread();
+      const currentIds = thread ? (Array.isArray(thread.fm.fragment_ids) ? thread.fm.fragment_ids : []) : [];
+
+      // Build membership map: fragId -> [{slug, title}]
+      const membershipMap = {};
+      state.threads.forEach(t => {
+        const ids = (t.fm && Array.isArray(t.fm.fragment_ids)) ? t.fm.fragment_ids : [];
+        ids.forEach(id => {
+          if (!membershipMap[id]) membershipMap[id] = [];
+          membershipMap[id].push({ slug: t.slug, title: (t.fm && t.fm.title) ? t.fm.title : t.slug });
+        });
+      });
+
+      // Filter
+      let frags = state.fragments.slice();
+      if (state.libraryFilter !== 'all') {
+        frags = frags.filter(f => f.fm && f.fm.type === state.libraryFilter);
+      }
+      const qLower = state.libraryQuery.toLowerCase().trim();
+      if (qLower) {
+        frags = frags.filter(f => {
+          const body = (f.body || '').toLowerCase();
+          const src = ((f.fm && f.fm.source) || '').toLowerCase();
+          return body.includes(qLower) || src.includes(qLower);
+        });
+      }
+
+      if (frags.length === 0) {
+        const empty = el('div', null, '沒有符合的片段');
+        empty.style.cssText = 'padding:20px 8px;text-align:center;font-size:12px;color:#b8977e;';
+        list.appendChild(empty);
+        return;
+      }
+
+      frags.forEach(frag => {
+        const fragId = frag.fm && frag.fm.id;
+        const inCurrent = currentIds.includes(fragId);
+        const memberships = membershipMap[fragId] || [];
+
+        const card = el('div', 'lib-fragment-card' + (inCurrent ? ' already-in-thread' : ''));
+
+        if (!inCurrent) {
+          card.draggable = true;
+          card.addEventListener('dragstart', () => {
+            state.draggingFragId = fragId;
+            state.draggingFromIdx = null;
+          });
+          card.addEventListener('dragend', () => { state.draggingFragId = null; });
+        }
+
+        // Meta
+        const fm = frag.fm || {};
+        const metaEl = el('div', 'lib-fragment-meta');
+        if ((fm.type || 'thought') === 'quote') {
+          metaEl.textContent = '📖 ' + (fm.source ? String(fm.source) : '') + (fm.page ? ' p.' + String(fm.page) : '');
+        } else {
+          metaEl.textContent = '✏️ ' + (fm.date ? String(fm.date).slice(0, 10) : '想法');
+        }
+        card.appendChild(metaEl);
+
+        // Preview
+        const preview = el('div', 'lib-fragment-preview');
+        preview.textContent = frag.body || '（無內容）';
+        card.appendChild(preview);
+
+        // Badges
+        const badgesRow = el('div', 'badges-row');
+        if (inCurrent) {
+          badgesRow.appendChild(el('span', 'badge badge-current', '✓ 已在此串'));
+        } else if (memberships.length === 0) {
+          badgesRow.appendChild(el('span', 'badge badge-unassigned', '未分配'));
+        } else {
+          memberships.forEach(m => {
+            const cls = (state.activeSlug && m.slug === state.activeSlug) ? 'badge badge-current' : 'badge badge-other';
+            const b = el('span', cls);
+            b.textContent = m.title;
+            badgesRow.appendChild(b);
+          });
+        }
+        card.appendChild(badgesRow);
+
+        // Actions
+        const actions = el('div', 'lib-fragment-actions');
+
+        if (!inCurrent && state.activeSlug) {
+          const addBtn = el('button', 'btn-lib-add', '＋ 加入');
+          addBtn.addEventListener('click', () => {
+            const t = getActiveThread();
+            const len = (t && Array.isArray(t.fm.fragment_ids)) ? t.fm.fragment_ids.length : 0;
+            addFragmentToThread(fragId, len);
+          });
+          actions.appendChild(addBtn);
+        }
+
+        const delBtn = el('button', 'btn-lib-delete', '刪除');
+        delBtn.addEventListener('click', () => deleteFragment(fragId));
+        actions.appendChild(delBtn);
+
+        card.appendChild(actions);
+        list.appendChild(card);
+      });
+    }
+
+    // ── Fragment Operations ────────────────────────────────────────────────────
+    async function deleteFragment(id) {
+      if (!confirm('確定刪除此片段？此操作無法復原。')) return;
+      try {
+        await apiFetch('POST', '/api/fragments/delete', { id });
+        showToast('片段已刪除');
+        await loadAll();
+      } catch (e) {
+        showToast('刪除失敗：' + e.message, true);
+      }
+    }
+
+    function createFragment() {
+      const list = document.getElementById('libraryList');
+
+      // Toggle off if form already open
+      const existing = list.querySelector('.new-fragment-form');
+      if (existing) { list.removeChild(existing); return; }
+
+      const form = el('div', 'new-fragment-form');
+
+      // Type select
+      const typeSelect = document.createElement('select');
+      const optThought = document.createElement('option');
+      optThought.value = 'thought';
+      optThought.textContent = '✏️ 想法';
+      const optQuote = document.createElement('option');
+      optQuote.value = 'quote';
+      optQuote.textContent = '📖 書摘';
+      typeSelect.appendChild(optThought);
+      typeSelect.appendChild(optQuote);
+      form.appendChild(typeSelect);
+
+      const sourceInput = document.createElement('input');
+      sourceInput.type = 'text';
+      sourceInput.placeholder = '來源書名…';
+      sourceInput.style.display = 'none';
+      form.appendChild(sourceInput);
+
+      const pageInput = document.createElement('input');
+      pageInput.type = 'text';
+      pageInput.placeholder = '頁碼（選填）…';
+      pageInput.style.display = 'none';
+      form.appendChild(pageInput);
+
+      typeSelect.addEventListener('change', () => {
+        const isQuote = typeSelect.value === 'quote';
+        sourceInput.style.display = isQuote ? 'block' : 'none';
+        pageInput.style.display = isQuote ? 'block' : 'none';
+      });
+
+      const tagsInput = document.createElement('input');
+      tagsInput.type = 'text';
+      tagsInput.placeholder = '標籤（逗號分隔，選填）…';
+      form.appendChild(tagsInput);
+
+      const contentArea = document.createElement('textarea');
+      contentArea.placeholder = '片段內容…';
+      form.appendChild(contentArea);
+
+      const actions = el('div', 'new-fragment-form-actions');
+
+      const submitBtn = el('button', 'btn-form-submit', '建立片段');
+      submitBtn.addEventListener('click', async () => {
+        const content = contentArea.value.trim();
+        if (!content) { showToast('請輸入片段內容', true); return; }
+
+        const payload = { type: typeSelect.value, content };
+        if (typeSelect.value === 'quote' && sourceInput.value.trim()) {
+          payload.source = sourceInput.value.trim();
+          if (pageInput.value.trim()) payload.page = pageInput.value.trim();
+        }
+        const tagsRaw = tagsInput.value.trim();
+        payload.tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+        try {
+          await apiFetch('POST', '/api/fragments/create', payload);
+          showToast('片段已建立');
+          await loadAll();
+        } catch (e) {
+          showToast('建立失敗：' + e.message, true);
+        }
+      });
+
+      const cancelBtn = el('button', 'btn-form-cancel', '取消');
+      cancelBtn.addEventListener('click', () => {
+        if (form.parentNode) form.parentNode.removeChild(form);
+      });
+
+      actions.appendChild(submitBtn);
+      actions.appendChild(cancelBtn);
+      form.appendChild(actions);
+
+      list.insertBefore(form, list.firstChild);
+      contentArea.focus();
+    }
+
+    // ── Share ──────────────────────────────────────────────────────────────────
+    function shareThread() {
+      const thread = getActiveThread();
+      if (!thread) return;
+      const url = window.location.origin + '/threads/' + thread.slug + '/';
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('公開網址已複製');
+      }).catch(() => {
+        showToast(url);
+      });
+    }
+
+    // ── Bootstrap ─────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('btnNewThread').addEventListener('click', createThread);
+      document.getElementById('btnToggleLibrary').addEventListener('click', toggleLibrary);
+      document.getElementById('btnPublish').addEventListener('click', () => showToast('即將推出'));
+      document.getElementById('btnShare').addEventListener('click', shareThread);
+      document.getElementById('librarySearch').addEventListener('input', e => renderLibrary(e.target.value));
+      document.getElementById('btnNewFragment').addEventListener('click', createFragment);
+
+      document.getElementById('libraryTabs').addEventListener('click', e => {
+        const tab = e.target.closest('.library-tab');
+        if (!tab) return;
+        document.querySelectorAll('.library-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        state.libraryFilter = tab.dataset.filter;
+        renderLibrary(state.libraryQuery);
+      });
+
+      loadAll();
+    });
+  </script>
+</body>
+</html>
