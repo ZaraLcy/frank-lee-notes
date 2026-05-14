@@ -1,57 +1,44 @@
-<!DOCTYPE HTML>
-<html lang="en" >
-    <head>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    {%- include blog-head.html -%}
+  </head>
+  <body>
+    {%- include blog-header.html -%}
 
-        {%- include head.html -%}
+    <div class="layout">
+      {%- include blog-sidebar.html -%}
 
-        {% assign reversed_posts = site.posts | reverse %}
+      <main class="content" id="content">
+        <section class="intro">
+          {{ content }}
+        </section>
 
-        {% if reversed_posts %}
-            <link rel="next" href="{{site.baseurl}}{{reversed_posts.first.url}}" />
-        {% endif %}
-    </head>
-    <body>
-        <div class="book">
+        <section class="post-list" aria-label="最新文章">
+          {%- assign posts = site.posts | sort: "date" | reverse -%}
+          {%- for post in posts -%}
+            <article class="post-item">
+              <h2><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
+              <div class="post-meta">
+                <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y/%m/%d" }}</time>
+                {%- if post.category -%}
+                  <a class="tag" href="{{ '/categories/' | relative_url }}#{{ post.category | slugify: 'raw' }}">{{ post.category }}</a>
+                {%- endif -%}
+                {%- if post.tags and post.tags.size > 0 -%}
+                  <span class="tag-list">
+                    {%- for tag in post.tags limit: 5 -%}
+                      <a class="tag" href="{{ '/tags/' | relative_url }}#{{ tag | slugify: 'raw' }}">{{ tag }}</a>
+                    {%- endfor -%}
+                  </span>
+                {%- endif -%}
+              </div>
+              <p class="post-excerpt">{{ post.excerpt | strip_html | normalize_whitespace | truncate: 180 }}</p>
+            </article>
+          {%- endfor -%}
+        </section>
+      </main>
+    </div>
 
-            {%- include toc-date.html -%}
-
-            <div class="book-body">
-                <div class="book-header" role="navigation">
-                    <!-- Title -->
-                    <h1>
-                        <i class="fa fa-circle-o-notch fa-spin"></i>
-                        {% if page.title %}
-                            <a href="." >{{ page.title | escape }}</a>
-                        {% else %}
-                            <a href="." >{{ site.title | escape }}</a>
-                        {% endif %}
-                    </h1>
-                </div>
-
-                <div class="body-inner">
-                    {%- include body.html -%}
-
-                    <a href="{{site.baseurl}}/" class="navigation navigation-pre navigation-unique">
-                        <i class="fa"></i>
-                    </a>
-
-                    {% if reversed_posts %}
-                        <a href="{{site.baseurl}}{{reversed_posts.first.url}}" class="navigation navigation-next navigation-unique" aria-label="Next page: {{reversed_posts.first.title}}">
-                            <i class="fa fa-angle-right"></i>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-
-            <script>
-            var gitbook = gitbook || [];
-            gitbook.push(function() {
-                gitbook.page.hasChanged({%- include metadata-home.json.tpl -%});
-            });
-            </script>
-        </div>
-
-        {%- include footer.html -%}
-
-    </body>
+    {%- include blog-footer.html -%}
+  </body>
 </html>

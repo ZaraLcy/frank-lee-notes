@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    {%- include blog-head.html -%}
+  </head>
+  <body>
+    {%- include blog-header.html -%}
+
+    <div class="layout">
+      {%- include blog-sidebar.html -%}
+
+      <main class="content" id="content">
+        <article class="article">
+          {% unless page.hide_title %}
+            <header class="article-header">
+              <h1>{{ page.title | escape }}</h1>
+            </header>
+          {% endunless %}
+
+          <div class="article-content">
+            {{ content }}
+          </div>
+        </article>
+      </main>
+    </div>
+
+    {% include mathjax.html %}
+    {% if page.mermaid %}
+      {% include mermaid.html %}
+    {% endif %}
+    {%- include blog-footer.html -%}
+  </body>
+</html>

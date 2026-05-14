@@ -1,7 +1,8 @@
 ---
-layout: home
+layout: page
 title: 💬 微誌動態
 permalink: /microblog/
+hide_title: true
 ---
 
 <link rel="stylesheet" href="{{ '/assets/css/microblog.css' | relative_url }}">

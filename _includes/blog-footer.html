@@ -1,0 +1,20 @@
+<footer class="site-footer">
+  <p>Released under the MIT License.</p>
+  <p>Content licensed under CC BY-NC-SA 4.0 unless otherwise noted.</p>
+</footer>
+
+<script>
+  (function () {
+    const key = 'frank-lee-notes-theme';
+    const root = document.documentElement;
+    const saved = localStorage.getItem(key);
+    if (saved === 'dark') root.classList.add('dark');
+
+    const button = document.querySelector('.theme-toggle');
+    if (!button) return;
+    button.addEventListener('click', function () {
+      root.classList.toggle('dark');
+      localStorage.setItem(key, root.classList.contains('dark') ? 'dark' : 'light');
+    });
+  })();
+</script>
