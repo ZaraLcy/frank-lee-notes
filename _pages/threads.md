@@ -1,7 +1,8 @@
 ---
-layout: home
+layout: page
 title: 📚 脈絡串
 permalink: /脈絡串/
+hide_title: true
 ---
 <link rel="stylesheet" href="{{ '/assets/css/thread.css' | relative_url }}">
 <div style="max-width:680px;margin:40px auto;padding:0 20px;font-family:Georgia,serif;">

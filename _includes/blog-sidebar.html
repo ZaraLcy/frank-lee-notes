@@ -1,0 +1,30 @@
+<aside class="site-sidebar" aria-label="Sidebar Navigation">
+  <section class="sidebar-section">
+    <h2>文章分類</h2>
+    <nav class="sidebar-links">
+      {%- assign sorted_categories = site.categories | sort -%}
+      {%- for category in sorted_categories -%}
+        {%- assign category_name = category[0] -%}
+        {%- assign posts = category[1] -%}
+        <a href="{{ '/categories/' | relative_url }}#{{ category_name | slugify: 'raw' }}">
+          <span>{{ category_name }}</span>
+          <span class="count">{{ posts.size }}</span>
+        </a>
+      {%- endfor -%}
+    </nav>
+  </section>
+
+  <section class="sidebar-section">
+    <h2>標籤</h2>
+    <a class="sidebar-chip" href="{{ '/tags/' | relative_url }}">瀏覽所有標籤</a>
+  </section>
+
+  <section class="sidebar-section">
+    <h2>其他</h2>
+    <nav class="sidebar-links">
+      <a href="{{ '/pages/about/' | relative_url }}">關於</a>
+      <a href="{{ '/microblog/' | relative_url }}">微誌動態</a>
+      <a href="{{ '/脈絡串/' | relative_url }}">脈絡串</a>
+    </nav>
+  </section>
+</aside>
