@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    {%- include blog-head.html -%}
+    <style>
+      body { margin: 0; background: #fff; }
+      .standalone-wrap {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 3rem 2rem 5rem;
+        font-size: 1rem;
+        line-height: 1.8;
+      }
+      .standalone-wrap h1 { font-size: 1.7rem; margin-bottom: .4rem; }
+      .standalone-wrap .post-meta { color: #888; font-size: .875rem; margin-bottom: 2rem; }
+      .standalone-wrap .post-meta a { color: #888; }
+      .standalone-wrap img { max-width: 100%; height: auto; }
+      .standalone-wrap table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+      .standalone-wrap th, .standalone-wrap td { border: 1px solid #ddd; padding: .5rem .75rem; }
+      .standalone-wrap th { background: #f5f5f5; }
+      @media (max-width: 600px) {
+        .standalone-wrap { padding: 2rem 1rem 4rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="standalone-wrap">
+      <article>
+        <header>
+          <h1>{{ page.title | escape }}</h1>
+          <div class="post-meta">
+            {% if page.date %}<time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y/%m/%d" }}</time>{% endif %}
+            {% if page.author %} &nbsp;·&nbsp; {{ page.author }}{% endif %}
+          </div>
+        </header>
+        <div class="article-content">
+          {{ content }}
+        </div>
+      </article>
+    </div>
+    {% include mathjax.html %}
+  </body>
+</html>
