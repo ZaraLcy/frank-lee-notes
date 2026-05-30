@@ -4,7 +4,7 @@ date: 2026-03-27
 author: Frank Lee
 category: 中醫學習
 tags: [中醫, 經絡, 三焦, 筋膜, 間質, 解剖, 譯文]
-layout: post
+layout: standalone
 ---
 
 > **原文：** Xia Y, Jia Y, Qu H, Wei Q, Yan L, Li X. The fascial-interstitial system and the sanjiao-mocou system: an analogy-based hypothesis for the anatomical basis of meridian pathways. *Front. Physiol.* 2026;17:1795656.  
