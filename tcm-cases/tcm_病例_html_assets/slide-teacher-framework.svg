@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="t4 d4">
+  <title id="t4">老師評論：中焦先行的臨床邏輯</title>
+  <desc id="d4">抗生素傷中焦→上下俱虛→先復中焦的治療框架</desc>
+  <rect width="1200" height="760" fill="#fbfaf7"/>
+  <rect x="54" y="46" width="1092" height="668" rx="18" fill="#fff" stroke="#d9d2c8" stroke-width="2"/>
+
+  <text x="92" y="108" fill="#25211d" font-size="38" font-weight="800" font-family="Noto Sans TC,PingFang TC,sans-serif">老師評論：中焦先行的臨床邏輯</text>
+  <text x="92" y="148" fill="#6e665f" font-size="21" font-family="Noto Sans TC,PingFang TC,sans-serif">抗生素久服傷中焦 → 中焦一垮，上下俱虛 → 先復中焦是「捷徑」</text>
+
+  <!-- Top: 病因 -->
+  <rect x="396" y="180" width="408" height="68" rx="12" fill="#fff7f1" stroke="#a44f31" stroke-width="2.5"/>
+  <text x="600" y="210" fill="#a44f31" font-size="22" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">病因</text>
+  <text x="600" y="236" fill="#6e665f" font-size="17" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">車禍術後長期服用抗生素、止痛藥</text>
+
+  <!-- Arrow down -->
+  <line x1="600" y1="248" x2="600" y2="298" stroke="#a44f31" stroke-width="2.5"/>
+  <path d="M592 294 l8 12 l8 -12 z" fill="#a44f31"/>
+
+  <!-- Middle: 中焦受損 -->
+  <rect x="348" y="300" width="504" height="68" rx="12" fill="#f1ede6" stroke="#717a33" stroke-width="2.5"/>
+  <text x="600" y="330" fill="#25211d" font-size="24" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">中焦受損</text>
+  <text x="600" y="356" fill="#717a33" font-size="17" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">運化失司・水濕停聚・生發之氣受損</text>
+
+  <!-- Branch left arrow -->
+  <line x1="400" y1="368" x2="268" y2="420" stroke="#a44f31" stroke-width="2" stroke-dasharray="6,4"/>
+  <path d="M260 416 l10 10 l4 -13 z" fill="#a44f31"/>
+
+  <!-- Branch right arrow -->
+  <line x1="800" y1="368" x2="932" y2="420" stroke="#2f756f" stroke-width="2" stroke-dasharray="6,4"/>
+  <path d="M926 416 l4 13 l10 -10 z" fill="#2f756f"/>
+
+  <!-- Left branch: 上焦心陽虛 -->
+  <rect x="84" y="422" width="336" height="118" rx="12" fill="#fff7f1" stroke="#a44f31" stroke-width="2"/>
+  <text x="252" y="456" fill="#a44f31" font-size="21" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">上焦：心陽虛</text>
+  <text x="252" y="482" fill="#25211d" font-size="17" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">心慌易驚</text>
+  <text x="252" y="504" fill="#25211d" font-size="17" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">自汗、忽冷忽熱</text>
+  <text x="252" y="526" fill="#25211d" font-size="17" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">恐慌、神不守舍</text>
+
+  <!-- Right branch: 下焦寒濕 -->
+  <rect x="780" y="422" width="336" height="118" rx="12" fill="#eef8f5" stroke="#2f756f" stroke-width="2"/>
+  <text x="948" y="456" fill="#2f756f" font-size="21" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">下焦：寒濕積聚</text>
+  <text x="948" y="482" fill="#25211d" font-size="17" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">反覆泌尿道感染</text>
+  <text x="948" y="504" fill="#25211d" font-size="17" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">帶下、蛋白尿</text>
+  <text x="948" y="526" fill="#25211d" font-size="17" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">尺部有病位（偏寒）</text>
+
+  <!-- Arrows converging down to solution -->
+  <line x1="252" y1="540" x2="430" y2="596" stroke="#717a33" stroke-width="2" stroke-dasharray="6,4"/>
+  <line x1="948" y1="540" x2="770" y2="596" stroke="#717a33" stroke-width="2" stroke-dasharray="6,4"/>
+  <line x1="600" y1="600" x2="600" y2="604" stroke="#717a33" stroke-width="2"/>
+
+  <!-- Solution box -->
+  <rect x="298" y="596" width="604" height="90" rx="12" fill="#eef8f5" stroke="#2f756f" stroke-width="2.5"/>
+  <text x="600" y="628" fill="#25211d" font-size="22" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">治法：先復中焦（「捷徑」）</text>
+  <text x="600" y="654" fill="#2f756f" font-size="18" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">附子理中湯加減｜可加龍骨牡蠣、肉桂（鄭清安）</text>
+  <text x="600" y="676" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">中焦建立後，上下諸症自然改善</text>
+</svg>

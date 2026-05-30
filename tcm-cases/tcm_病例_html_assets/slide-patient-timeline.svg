@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="t1 d1">
+  <title id="t1">病史時間軸</title>
+  <desc id="d1">從車禍到中醫首診的事件發展脈絡</desc>
+  <rect width="1200" height="760" fill="#fbfaf7"/>
+  <rect x="54" y="46" width="1092" height="668" rx="18" fill="#fff" stroke="#d9d2c8" stroke-width="2"/>
+
+  <text x="92" y="110" fill="#25211d" font-size="40" font-weight="800" font-family="Noto Sans TC,PingFang TC,sans-serif">病史時間軸</text>
+  <text x="92" y="150" fill="#6e665f" font-size="22" font-family="Noto Sans TC,PingFang TC,sans-serif">從車禍到中醫首診：三個月內的關鍵事件</text>
+
+  <!-- Timeline spine -->
+  <line x1="112" y1="318" x2="1088" y2="318" stroke="#d9d2c8" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Node 1: 11/13 車禍 -->
+  <circle cx="185" cy="318" r="16" fill="#a44f31"/>
+  <text x="185" y="274" fill="#a44f31" font-size="19" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">2023 / 11 / 13</text>
+  <text x="185" y="368" fill="#25211d" font-size="18" font-weight="700" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">車禍發生</text>
+  <text x="185" y="394" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">機車 vs. 卡車擦撞</text>
+  <text x="185" y="416" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">雙上肢粉碎性骨折</text>
+  <text x="185" y="438" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">顏面骨折 C4-C5退化</text>
+
+  <!-- Node 2: 術後 -->
+  <circle cx="420" cy="318" r="16" fill="#717a33"/>
+  <text x="420" y="280" fill="#717a33" font-size="19" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">術後</text>
+  <text x="420" y="368" fill="#25211d" font-size="18" font-weight="700" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">西醫術後用藥</text>
+  <text x="420" y="394" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">抗生素＋止痛藥</text>
+  <text x="420" y="416" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">食慾差、腸胃脹氣</text>
+  <text x="420" y="438" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">恐慌症狀持續誘發</text>
+
+  <!-- Node 3: 12/16 暈針 -->
+  <circle cx="655" cy="318" r="16" fill="#466b91"/>
+  <text x="655" y="274" fill="#466b91" font-size="19" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">2023 / 12 / 16</text>
+  <text x="655" y="368" fill="#25211d" font-size="18" font-weight="700" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">暈針事件</text>
+  <text x="655" y="394" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">血壓降至 96/58</text>
+  <text x="655" y="416" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">（平時 110/70）</text>
+  <text x="655" y="438" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">→ 改用雷射針</text>
+
+  <!-- Node 4: 1/9 首診 -->
+  <circle cx="890" cy="318" r="16" fill="#2f756f"/>
+  <text x="890" y="274" fill="#2f756f" font-size="19" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">2024 / 1 / 9</text>
+  <text x="890" y="368" fill="#25211d" font-size="18" font-weight="700" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">中醫首診</text>
+  <text x="890" y="394" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">主訴：恐慌易驚</text>
+  <text x="890" y="416" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">腸胃道持續不適</text>
+  <text x="890" y="438" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">失眠、噩夢、大汗</text>
+
+  <!-- Node 5: 後續 -->
+  <circle cx="1070" cy="318" r="16" fill="#a44f31"/>
+  <text x="1070" y="280" fill="#a44f31" font-size="19" font-weight="800" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">後續</text>
+  <text x="1070" y="368" fill="#25211d" font-size="18" font-weight="700" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">七診追蹤</text>
+  <text x="1070" y="394" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">動態辨證</text>
+  <text x="1070" y="416" fill="#6e665f" font-size="16" text-anchor="middle" font-family="Noto Sans TC,PingFang TC,sans-serif">逐診調整處方</text>
+
+  <!-- Bottom keyline -->
+  <rect x="92" y="512" width="1016" height="118" rx="12" fill="#f1ede6"/>
+  <text x="128" y="552" fill="#25211d" font-size="25" font-weight="700" font-family="Noto Sans TC,PingFang TC,sans-serif">身心連鎖反應</text>
+  <text x="128" y="590" fill="#6e665f" font-size="21" font-family="Noto Sans TC,PingFang TC,sans-serif">車禍驚嚇 → 術後用藥傷胃 → 腸胃不適 → 心神被擾 → 恐慌誘發，各環節環環相扣，難以截然分治。</text>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="t2 d2">
+  <title id="t2">四診合參</title>
+  <desc id="d2">首診望問切三診整合分析與辨證結論</desc>
+  <rect width="1200" height="760" fill="#fbfaf7"/>
+  <rect x="54" y="46" width="1092" height="668" rx="18" fill="#fff" stroke="#d9d2c8" stroke-width="2"/>
+
+  <text x="92" y="110" fill="#25211d" font-size="40" font-weight="800" font-family="Noto Sans TC,PingFang TC,sans-serif">四診合參</text>
+  <text x="92" y="150" fill="#6e665f" font-size="22" font-family="Noto Sans TC,PingFang TC,sans-serif">首診（2024/1/9）各診所見整合</text>
+
+  <!-- Q1: 望診 top-left -->
+  <rect x="92" y="172" width="486" height="220" rx="12" fill="#fff7f1" stroke="#a44f31" stroke-width="2"/>
+  <text x="118" y="210" fill="#a44f31" font-size="25" font-weight="800" font-family="Noto Sans TC,PingFang TC,sans-serif">望診</text>
+  <text x="118" y="244" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・體態虛弱</text>
+  <text x="118" y="268" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・雙上肢鋼板固定，活動受限</text>
+  <text x="118" y="292" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・傷口蟹足腫增生</text>
+  <text x="118" y="316" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・術後曾有膿性分泌物（解毒方處理中）</text>
+  <text x="118" y="340" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・術後雙關節仍可動</text>
+
+  <!-- Q2: 問診 top-right -->
+  <rect x="622" y="172" width="524" height="220" rx="12" fill="#eef8f5" stroke="#2f756f" stroke-width="2"/>
+  <text x="648" y="210" fill="#2f756f" font-size="25" font-weight="800" font-family="Noto Sans TC,PingFang TC,sans-serif">問診</text>
+  <text x="648" y="244" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・手腫脹，手指麻木（甩手可稍緩解）</text>
+  <text x="648" y="268" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・唇繫帶斷裂→嘴巴閉不住、講話漏風</text>
+  <text x="648" y="292" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・夜間口乾，吸管吸不起來</text>
+  <text x="648" y="316" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・睡眠淺、噩夢、大量冒汗</text>
+  <text x="648" y="340" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・食慾差、腸胃脹氣、食後腹脹、心下胃痛</text>
+
+  <!-- Q3: 切診 bottom-left -->
+  <rect x="92" y="418" width="486" height="254" rx="12" fill="#f4f6e8" stroke="#717a33" stroke-width="2"/>
+  <text x="118" y="454" fill="#717a33" font-size="25" font-weight="800" font-family="Noto Sans TC,PingFang TC,sans-serif">切診（脈象）</text>
+  <text x="118" y="488" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・雙寸：上哨陰虛鎖</text>
+  <text x="118" y="512" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・左寸：浮取五粒；沉取沉持</text>
+  <text x="118" y="536" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・左關：緩脹，按提跟不上</text>
+  <text x="118" y="560" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・右寸：沉持</text>
+  <text x="118" y="584" fill="#25211d" font-size="18" font-family="Noto Sans TC,PingFang TC,sans-serif">・右關：前部脹，浮圍上膩感</text>
+  <text x="118" y="634" fill="#a44f31" font-size="19" font-weight="700" font-family="Noto Sans TC,PingFang TC,sans-serif">→ 心陽虛弱 ＋ 中焦氣滯上逆</text>
+
+  <!-- Q4: 辨證結論 bottom-right -->
+  <rect x="622" y="418" width="524" height="254" rx="12" fill="#edf1fb" stroke="#466b91" stroke-width="2"/>
+  <text x="648" y="454" fill="#466b91" font-size="25" font-weight="800" font-family="Noto Sans TC,PingFang TC,sans-serif">辨證結論</text>
+  <text x="648" y="490" fill="#25211d" font-size="19" font-weight="700" font-family="Noto Sans TC,PingFang TC,sans-serif">主證一：心陽虛</text>
+  <text x="648" y="514" fill="#6e665f" font-size="17" font-family="Noto Sans TC,PingFang TC,sans-serif">    心神不安、易驚、大汗、忽冷忽熱</text>
+  <text x="648" y="548" fill="#25211d" font-size="19" font-weight="700" font-family="Noto Sans TC,PingFang TC,sans-serif">主證二：中焦氣機失調</text>
+  <text x="648" y="572" fill="#6e665f" font-size="17" font-family="Noto Sans TC,PingFang TC,sans-serif">    脘腹脹滿、打嗝、食後不適、上膩</text>
+  <text x="648" y="610" fill="#25211d" font-size="19" font-weight="700" font-family="Noto Sans TC,PingFang TC,sans-serif">兩者關係：互相牽動</text>
+  <text x="648" y="634" fill="#6e665f" font-size="17" font-family="Noto Sans TC,PingFang TC,sans-serif">    腸胃不適 ↔ 心慌恐慌，相互誘發</text>
+</svg>

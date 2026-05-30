@@ -1,0 +1,874 @@
+---
+layout: null
+---
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>病例報告｜車禍後恐慌誘發：心陽虛與中焦氣機失調</title>
+  <style>
+    :root {
+      --ink: #25211d;
+      --muted: #6e665f;
+      --line: #d9d2c8;
+      --paper: #fbfaf7;
+      --surface: #ffffff;
+      --wash: #f1ede6;
+      --rust: #a44f31;
+      --teal: #2f756f;
+      --olive: #717a33;
+      --blue: #466b91;
+      --shadow: 0 18px 45px rgba(55,43,30,.12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.7;
+    }
+
+    a { color: inherit; }
+
+    /* ── Topbar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      border-bottom: 1px solid rgba(37,33,29,.12);
+      background: rgba(251,250,247,.92);
+      backdrop-filter: blur(16px);
+    }
+    .topbar-inner {
+      max-width: 1220px; margin: 0 auto;
+      padding: 12px 20px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 18px;
+    }
+    .brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+    .brand strong { font-size: 16px; white-space: nowrap; }
+    .brand span { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .nav { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .nav a, .chapter button, .control button {
+      border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+      border-radius: 999px; padding: 7px 11px;
+      font: inherit; font-size: 13px; line-height: 1;
+      text-decoration: none; cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .nav a:hover, .chapter button:hover, .control button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(164,79,49,.45);
+      background: #fff7f1;
+    }
+
+    /* ── Layout ── */
+    main { max-width: 1380px; margin: 0 auto; padding: 24px 20px 56px; }
+
+    .hero {
+      display: grid; grid-template-columns: minmax(0,1fr);
+      gap: 24px; align-items: stretch;
+      padding: 84px 0 72px; margin-bottom: 34px;
+    }
+    .hero-copy { padding: 18px 0 12px; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+    .eyebrow { margin: 0 0 18px; color: var(--rust); font-size: 14px; font-weight: 700; }
+    h1 { margin: 0; max-width: 780px; font-size: clamp(32px,5vw,64px); line-height: 1.05; font-weight: 800; }
+    .hero-copy p { max-width: 720px; margin: 20px 0 0; color: var(--muted); font-size: 18px; }
+
+    .summary-strip { margin-top: 28px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+    .summary-item { border-top: 2px solid var(--line); padding-top: 12px; }
+    .summary-item b { display: block; font-size: 14px; }
+    .summary-item span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 230px minmax(0,1fr) 360px;
+      grid-template-areas: "timeline content player";
+      gap: 24px; align-items: start;
+    }
+
+    /* ── Timeline sidebar ── */
+    .timeline {
+      grid-area: timeline;
+      position: sticky; top: 70px;
+      max-height: calc(100vh - 90px); overflow: auto;
+      padding: 12px;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    }
+    .timeline h2, .section h2, .section h3 { margin: 0; line-height: 1.2; }
+    .timeline h2 { font-size: 15px; padding: 4px 4px 10px; }
+    .chapter { width: 100%; text-align: left; padding: 10px 8px; border-top: 1px solid var(--line); }
+    .chapter button { width: 100%; border-radius: var(--radius); padding: 10px; text-align: left; line-height: 1.35; background: transparent; }
+    .chapter button.active { border-color: rgba(47,117,111,.5); background: #eef8f5; }
+    .chapter time { display: block; color: var(--teal); font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+    .chapter span { display: block; font-weight: 700; font-size: 13px; }
+
+    /* ── Video player sidebar ── */
+    .player-panel {
+      align-self: start; position: sticky; top: 70px;
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      overflow: hidden; min-width: 0; z-index: 8;
+    }
+    .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #111; }
+    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; display: block; }
+    .player-meta { padding: 14px 16px 16px; display: grid; gap: 10px; }
+    .progress-shell { height: 8px; background: var(--wash); border-radius: 999px; overflow: hidden; }
+    .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg,var(--rust),var(--teal)); }
+    .player-meta small { color: var(--muted); }
+
+    /* ── Content area ── */
+    .content { grid-area: content; display: grid; gap: 24px; min-width: 0; }
+    .layout > .player-panel { grid-area: player; }
+
+    .section {
+      padding: 28px; background: var(--surface);
+      border: 1px solid var(--line); border-radius: var(--radius);
+      min-width: 0; scroll-margin-top: 86px;
+    }
+    .section h2 { font-size: 26px; margin-bottom: 16px; }
+    .section h3 { font-size: 19px; margin: 24px 0 12px; }
+    .section p { margin: 0 0 14px; }
+    .lead { color: var(--muted); font-size: 17px; }
+
+    .note-grid { display: grid; grid-template-columns: 1fr; gap: 18px; align-items: start; }
+    .note-grid > .figure.slide { order: -1; }
+
+    .figure { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; }
+    .figure img { width: 100%; display: block; }
+    .figure.slide img { aspect-ratio: 1200/760; object-fit: contain; background: #fbfaf7; }
+    .figure.slide { box-shadow: 0 14px 34px rgba(55,43,30,.1); }
+    .figure figcaption { padding: 10px 12px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    .keyline { margin: 18px 0 0; padding: 14px 16px; border-left: 4px solid var(--rust); background: #fff7f1; color: #4a2b20; }
+
+    ul { margin: 0; padding-left: 20px; }
+    li { margin: 6px 0; }
+
+    /* ── Diagram components ── */
+    .diagram-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; align-items: stretch; margin-top: 16px; }
+    .diagram-box, .term, .question, .branch {
+      border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; padding: 14px; min-width: 0;
+    }
+    .diagram-box b, .term b, .question b, .branch b { display: block; line-height: 1.35; margin-bottom: 6px; }
+    .diagram-box small, .term span, .question span, .branch span { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    .arrow { display: grid; grid-template-columns: 1fr 44px 1fr 44px 1fr; align-items: center; gap: 8px; margin: 18px 0; }
+    .arrow .node { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; text-align: center; background: #fff; min-height: 96px; display: grid; align-content: center; }
+    .arrow .connector { height: 2px; background: var(--teal); position: relative; }
+    .arrow .connector::after { content: ""; position: absolute; right: -1px; top: -5px; width: 0; height: 0; border-left: 9px solid var(--teal); border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+
+    .paradox { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+    .paradox .side { border-radius: var(--radius); padding: 18px; border: 1px solid var(--line); background: #fff; }
+    .paradox .vir { border-top: 4px solid var(--rust); }
+    .paradox .shi { border-top: 4px solid var(--teal); }
+
+    .terms { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+    .questions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+
+    .mindmap { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .root-node { justify-self: center; border: 2px solid var(--rust); border-radius: var(--radius); padding: 14px 18px; background: #fff7f1; font-weight: 800; text-align: center; }
+    .branches { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
+    .branch { border-top: 4px solid var(--teal); }
+    .branch:nth-child(2) { border-top-color: var(--rust); }
+    .branch:nth-child(3) { border-top-color: var(--olive); }
+    .branch:nth-child(4) { border-top-color: var(--blue); }
+
+    /* ── Visit log ── */
+    .visit-log { display: grid; gap: 10px; margin-top: 16px; }
+    .visit { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; }
+    .visit-head { display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: var(--wash); border-bottom: 1px solid var(--line); }
+    .visit-badge { font-size: 12px; font-weight: 800; color: #fff; background: var(--rust); border-radius: 999px; padding: 3px 10px; }
+    .visit-date { font-size: 12px; color: var(--muted); }
+    .visit-note { margin-left: auto; font-size: 12px; color: var(--olive); font-weight: 700; }
+    .visit-body { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+    .visit-col { padding: 12px 14px; border-right: 1px solid var(--line); font-size: 13px; line-height: 1.65; }
+    .visit-col:last-child { border-right: none; }
+    .visit-col-label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+    .visit-rx-tag { display: inline-block; background: #eef8f5; color: var(--teal); border-radius: 4px; padding: 1px 7px; font-size: 12px; font-weight: 700; margin: 2px 2px 2px 0; }
+    .visit-alert { border-top-color: var(--blue) !important; }
+    .visit-alert .visit-badge { background: var(--blue); }
+
+    .slide-note { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 10px; color: var(--teal); font-size: 13px; font-weight: 700; }
+    .slide-note::before { content: ""; width: 9px; height: 9px; border-radius: 999px; background: var(--teal); }
+
+    .footer-note { color: var(--muted); font-size: 13px; text-align: center; padding: 20px 0 0; }
+
+    /* ── 2-col personal history ── */
+    .personal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .personal-item { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: 14px; }
+    .personal-item b { display: block; margin-bottom: 4px; color: var(--ink); }
+    .personal-item span { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── Responsive ── */
+    @media (max-width: 980px) {
+      .hero, .layout, .note-grid { grid-template-columns: 1fr; }
+      .layout { grid-template-areas: "timeline" "player" "content"; }
+      .timeline, .player-panel { position: static; max-height: none; }
+      .summary-strip, .terms, .questions, .branches, .diagram-row, .paradox, .personal-grid { grid-template-columns: 1fr; }
+      .arrow { grid-template-columns: 1fr; }
+      .arrow .connector { width: 2px; height: 28px; justify-self: center; }
+      .arrow .connector::after { right: -5px; top: auto; bottom: -1px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 9px solid var(--teal); border-bottom: 0; }
+      .visit-body { grid-template-columns: 1fr; }
+      .visit-col { border-right: none; border-bottom: 1px solid var(--line); }
+      .visit-col:last-child { border-bottom: none; }
+    }
+    @media (max-width: 640px) {
+      .topbar-inner { align-items: flex-start; flex-direction: column; }
+      .nav { justify-content: flex-start; }
+      main { padding: 18px 12px 42px; }
+      .section { padding: 20px 16px; }
+      h1 { font-size: 34px; }
+      .questions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <strong>後中醫病例報告</strong>
+      <span>慈濟後中・王德慈｜圖文筆記</span>
+    </div>
+    <nav class="nav" aria-label="頁面導覽">
+      <a href="#notes">診次筆記</a>
+      <a href="#visits">七診追蹤</a>
+      <a href="#diff">鑑別討論</a>
+      <a href="#terms">術語卡片</a>
+      <a href="#questions">臨床提問</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ══ Hero ══ -->
+  <section class="hero" aria-labelledby="title">
+    <div class="hero-copy">
+      <p class="eyebrow">Case Report / 慈濟後中醫・王德慈</p>
+      <h1 id="title">車禍後恐慌誘發<br>心陽虛與中焦氣機失調</h1>
+      <p>50 歲廖小姐因機車車禍後，恐慌相關症狀被誘發。本病例報告整理初診至七診的完整辨治過程，並附上心陽虛鑑別思路與三個臨床提問。</p>
+      <div class="summary-strip" aria-label="本案摘要">
+        <div class="summary-item">
+          <b>核心病機</b>
+          <span>心陽虛 + 中焦氣機失調，兩者互相牽動，腸胃不適即誘發心慌。</span>
+        </div>
+        <div class="summary-item">
+          <b>治療挑戰</b>
+          <span>服水藥即腹脹（→少量平服解決）；暈針史改用雷射針。</span>
+        </div>
+        <div class="summary-item">
+          <b>學習重點</b>
+          <span>動態辨證、逐診調整；水藥與科中分開處方的操作思路。</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 3-column layout ══ -->
+  <section class="layout" id="notes">
+
+    <!-- Timeline sidebar -->
+    <aside class="timeline" aria-label="課程時間軸">
+      <h2>章節時間軸</h2>
+      <div class="chapter"><button type="button" class="active" data-seek="4" data-target="c1"><time>00:00–02:05</time><span>病患背景與主訴</span></button></div>
+      <div class="chapter"><button type="button" data-seek="130" data-target="c2"><time>02:10–02:47</time><span>個人史與過去病史</span></button></div>
+      <div class="chapter"><button type="button" data-seek="167" data-target="c3"><time>02:47–04:04</time><span>四診合參</span></button></div>
+      <div class="chapter"><button type="button" data-seek="244" data-target="c4"><time>04:04–05:39</time><span>辨證思路與首診</span></button></div>
+      <div class="chapter"><button type="button" data-seek="339" data-target="c5"><time>05:39–11:22</time><span>七診追蹤記錄</span></button></div>
+      <div class="chapter"><button type="button" data-seek="682" data-target="c6"><time>11:22–13:41</time><span>補充：心陽虛鑑別</span></button></div>
+      <div class="chapter"><button type="button" data-seek="884" data-target="c7"><time>14:44–16:10</time><span>三個臨床提問</span></button></div>
+      <div class="chapter"><button type="button" data-seek="982" data-target="c8"><time>16:22–26:10</time><span>老師評論與Q&A</span></button></div>
+      <div class="chapter"><button type="button" data-seek="1637" data-target="c9"><time>27:17–36:16</time><span>老師補充案例</span></button></div>
+    </aside>
+
+    <!-- Video player sidebar -->
+    <aside class="player-panel" aria-label="病例報告影片">
+      <div class="video-wrapper">
+        <div id="ytPlayer"></div>
+      </div>
+      <div class="player-meta">
+        <div class="progress-shell" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+        <small id="timeLabel">00:00 / 36:18｜浮動播放器</small>
+        <div class="control">
+          <button type="button" data-seek="4">從開頭重看</button>
+          <button type="button" data-seek="339">跳至七診追蹤</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content sections -->
+    <div class="content">
+
+      <!-- 一句話總結 -->
+      <article class="section">
+        <h2>一句話總結</h2>
+        <p class="lead">車禍驚嚇誘發心陽虛與中焦氣機失調並存，腸胃不穩反過來誘發恐慌，臨床須動態辨別虛實主次，分診分處方逐步調整。</p>
+        <p>因此，這個病例的難點不在於找到「一個正確的方」，而在於在多層次、動態變化的症狀中，每次都能準確抓到當下的主要矛盾。</p>
+      </article>
+
+      <!-- c1: 病患背景 -->
+      <article class="section" id="c1">
+        <div class="note-grid">
+          <div>
+            <h2>病患背景與主訴</h2>
+            <p>慈濟醫院後中醫師王德慈分享的病例報告，主角是一位 50 歲的廖小姐。她去年 11 月 13 日因騎機車與卡車擦撞，造成雙上肢粉碎性骨折、顏面骨折，並發現 C4-C5 頸椎退化。</p>
+            <ul>
+              <li>術後持續服用抗生素與止痛藥，導致食慾變差、腸胃道脹氣、食後腹脹、心下胃痛、鬱嘔。</li>
+              <li>車禍後睡眠變淺、反覆噩夢、容易大量冒汗，恐慌相關症狀持續一個多月。</li>
+              <li>12 月 16 日在整間針灸時首次發生暈針（血壓 96/58，平時 110/70），之後改用雷射針。</li>
+              <li>首次中醫就診：2024 年 1 月 9 日，當天又出現打噴嚏、鼻癢、忽冷忽熱、冒汗等症狀。</li>
+            </ul>
+            <div class="keyline">我的理解：這不只是身體外傷的後遺症——術後用藥傷及中焦，加上本身有恐慌病史，車禍的驚嚇成了引爆點，讓身心兩條線同時失控。</div>
+          </div>
+          <figure class="figure slide">
+            <img src="tcm_病例_html_assets/slide-patient-timeline.svg" alt="病史時間軸圖解">
+            <figcaption>時間軸：車禍（11/13）→ 術後腸胃受損 → 暈針（12/16）→ 中醫首診（1/9）→ 七診追蹤</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- c2: 個人史 -->
+      <article class="section" id="c2">
+        <h2>個人史與過去病史</h2>
+        <p>身形：164 cm / 56 kg，BMI 20。去年已停經，目前可能處於更年期過渡期。</p>
+        <div class="personal-grid">
+          <div class="personal-item">
+            <b>恐慌病史</b>
+            <span>前幾年曾有恐慌發作，服用優解半顆，現已停藥超過一年。2023 年曾因恐慌、心悸至急診。</span>
+          </div>
+          <div class="personal-item">
+            <b>睡眠呼吸中止症</b>
+            <span>既有問題，睡眠本就偏淺，車禍後噩夢與冒汗情況更加明顯。</span>
+          </div>
+          <div class="personal-item">
+            <b>代謝相關</b>
+            <span>海洋性貧血；空腹血糖偏高，HbA1c 6.0；二尖瓣閉鎖不全。</span>
+          </div>
+          <div class="personal-item">
+            <b>消化道相關</b>
+            <span>鼻過敏；胃食道逆流（原有問題，車禍後加重）。</span>
+          </div>
+        </div>
+        <div class="keyline">值得注意：停經、海洋性貧血、血糖偏高、二尖瓣閉鎖不全——多病共存的背景讓辨證更複雜，每次用藥都需考量整體虛弱狀態。</div>
+      </article>
+
+      <!-- c3: 四診 -->
+      <article class="section" id="c3">
+        <div class="note-grid">
+          <div>
+            <h2>四診合參</h2>
+            <p><span class="slide-note">首診所見（2024/1/9）</span></p>
+            <p><strong>望診：</strong>體態虛弱；雙上肢打鋼板固定，傷口有蟹足腫增生，去年底曾可擠出膿（持續用解毒方加減處理）。術後雙關節仍可活動。</p>
+            <p><strong>問診：</strong>車禍後手部腫脹、手指麻木（甩手可稍緩解）；唇繫帶斷裂導致嘴巴閉不住，夜間口乾，吸管吸不起來，講話明顯漏風；排便偏黏、有不乾淨感；食慾差、腸胃脹氣、食後腹脹、心下胃痛；吃薄荷糖或梅子可稍緩解。</p>
+            <p><strong>切診：</strong>雙寸上哨陰虛鎖；左寸浮取五粒（沉取沉持），左關緩脹，按提跟不上；右寸沉持，右關前部脹，浮圍有上膩感。</p>
+            <div class="keyline">我的理解：左寸浮取仍有五粒，但沉取才能摸到持脈——脈氣浮散在上，卻無力往下走。這是心陽虛弱的典型脈象，陽氣不能固攝，所以浮越在外。</div>
+          </div>
+          <figure class="figure slide">
+            <img src="tcm_病例_html_assets/slide-four-diagnoses.svg" alt="四診合參圖解">
+            <figcaption>四格圖：望診・問診・切診（脈象）・辨證結論，首診四診整合一覽。</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- c4: 辨證首診 -->
+      <article class="section" id="c4">
+        <div class="note-grid">
+          <div>
+            <h2>辨證思路與首診處方</h2>
+            <p>脈象合參症狀，初步辨為兩個層次的問題：</p>
+            <div class="arrow" aria-label="辨證路徑">
+              <div class="node"><b>心陽虛</b><small>左寸無力、易驚、汗出、忽冷忽熱、心神不安</small></div>
+              <div class="connector" aria-hidden="true"></div>
+              <div class="node"><b>中焦氣機失調</b><small>右關上膩、左關緩脹、脘腹脹滿、打嗝上逆</small></div>
+              <div class="connector" aria-hidden="true"></div>
+              <div class="node"><b>兩者互相牽動</b><small>腸胃不穩 → 誘發心慌；心陽虛 → 影響中焦升降</small></div>
+            </div>
+            <h3>首診處方</h3>
+            <ul>
+              <li><strong>科中①</strong>：桂枝甘草龍骨牡蠣湯——辛甘化陽，鎮驚斂浮陽，處理心陽虛主線。</li>
+              <li><strong>科中②</strong>：桂枝湯加厚朴杏仁——推動中焦氣機，減少腸胃對心胸的壓迫感。</li>
+              <li><strong>水藥</strong>：補坎益離丹——溫補心腎陽氣，自行回去煎開服用四天。</li>
+            </ul>
+            <div class="keyline">關鍵決策：為何水藥與科中分開處方？補坎益離丹溫補力道較強，適合長期方向性用藥；科中則靈活，方便每次回診依症狀微調。分開可避免互相干擾。</div>
+          </div>
+          <figure class="figure slide">
+            <img src="tcm_病例_html_assets/slide-heart-yang.svg" alt="心神不安虛實鑑別圖">
+            <figcaption>分流圖：心神不安的虛（心陽虛）與實（水飲擾心）鑑別，以及對應處方。</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- c5: 七診追蹤 -->
+      <article class="section" id="c5">
+        <h2>七診追蹤記錄</h2>
+        <p class="lead">七次回診中，共遇到兩次感冒插曲與一次泌尿道感染，每次急性期過後仍回歸心陽虛與中焦的主線問題。</p>
+
+        <div class="visit-log" aria-label="七診追蹤">
+
+          <div class="visit">
+            <div class="visit-head">
+              <span class="visit-badge">第 1 診</span>
+              <span class="visit-date">2024 / 1 / 9（首診）</span>
+            </div>
+            <div class="visit-body">
+              <div class="visit-col">
+                <span class="visit-col-label">主要症狀</span>
+                恐慌易驚、忽冷忽熱、大量冒汗；打噴嚏鼻癢；腸胃脹氣、食後腹脹、心下胃痛；睡眠淺、噩夢
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">脈象</span>
+                雙寸上哨陰虛鎖；左寸浮五粒，沉持；左關緩脹，按提跟不上；右寸沉持；右關前脹，浮圍上膩
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">處方</span>
+                <span class="visit-rx-tag">桂枝甘草龍骨牡蠣湯</span>
+                <span class="visit-rx-tag">桂枝湯＋厚朴杏仁</span>
+                <span class="visit-rx-tag">水藥：補坎益離丹</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="visit">
+            <div class="visit-head">
+              <span class="visit-badge">第 2 診</span>
+              <span class="visit-date">2024 / 1 / 16</span>
+              <span class="visit-note">關鍵：改服藥方式</span>
+            </div>
+            <div class="visit-body">
+              <div class="visit-col">
+                <span class="visit-col-label">主要症狀</span>
+                打嗝放屁腹脹仍有；食量尚可；服水藥後立即腹脹、放屁及大便臭；容易受驚仍持續
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">脈象</span>
+                左寸浮取無力；雙關從緩脹轉為滑脹
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">處方</span>
+                <span class="visit-rx-tag">溫膽湯＋竹茹＋厚朴＋木香</span>
+                （理氣化痰，改善腹脹）<br>
+                教導<strong>少量平服法</strong>（多次少量平躺服水藥）
+              </div>
+            </div>
+          </div>
+
+          <div class="visit">
+            <div class="visit-head">
+              <span class="visit-badge">第 3 診</span>
+              <span class="visit-date">2024 / 1 / 23</span>
+            </div>
+            <div class="visit-body">
+              <div class="visit-col">
+                <span class="visit-col-label">主要症狀</span>
+                打嗝放屁已改善；少量平服後無腹脹；本週仍有 2 次胸悶＋胃肌肉緊縮＋想吐＋頭暈（1 次因腹脹上廁所後自行緩解）
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">脈象</span>
+                左關關格；雙尺脹；右側虛；右關上膩感
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">處方</span>
+                <span class="visit-rx-tag">原方＋半夏瀉心湯</span>
+                處理左關格脈，辛開苦降，解中焦寒熱痞結；水藥同方向繼續
+              </div>
+            </div>
+          </div>
+
+          <div class="visit visit-alert">
+            <div class="visit-head">
+              <span class="visit-badge">第 4 診</span>
+              <span class="visit-date">（感冒插曲）</span>
+              <span class="visit-note">先處理外感</span>
+            </div>
+            <div class="visit-body">
+              <div class="visit-col">
+                <span class="visit-col-label">主要症狀</span>
+                感冒症狀：喉嚨痛、流鼻涕、鼻塞
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">脈象</span>
+                右寸關伏鉤鎖；右關軟脹，按提根不上
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">處方</span>
+                <span class="visit-rx-tag">外感科中調整</span>
+                <span class="visit-rx-tag">半夏＋厚朴</span>
+                <span class="visit-rx-tag">化痰消脾藥</span>
+                （調腸胃氣機為輔）
+              </div>
+            </div>
+          </div>
+
+          <div class="visit">
+            <div class="visit-head">
+              <span class="visit-badge">第 5 診</span>
+              <span class="visit-date">（腹瀉急性期）</span>
+            </div>
+            <div class="visit-body">
+              <div class="visit-col">
+                <span class="visit-col-label">主要症狀</span>
+                當日腹瀉 6–7 次、腳痛；大便軟散味重；噁心；腹脹嚴重
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">脈象</span>
+                雙關如脹；內側有內觸感；上膩感明顯
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">處方</span>
+                <span class="visit-rx-tag">葛根黃芩黃連湯</span>
+                <span class="visit-rx-tag">木香＋半夏＋茯苓＋白朮＋厚朴</span>
+                <span class="visit-rx-tag">藿香正氣散</span>
+                （濕氣感明顯故加）
+              </div>
+            </div>
+          </div>
+
+          <div class="visit">
+            <div class="visit-head">
+              <span class="visit-badge">第 6 診</span>
+              <span class="visit-date">（腸胃漸穩）</span>
+            </div>
+            <div class="visit-body">
+              <div class="visit-col">
+                <span class="visit-col-label">主要症狀</span>
+                腹痛偶爾；大便偏酸，一日 2–3 次；不再腹瀉；仍有腹脹
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">脈象</span>
+                雙關脹；關內觸感
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">處方</span>
+                藿香正氣改為
+                <span class="visit-rx-tag">參苓白朮散</span>
+                ；其他藥物維持不變
+              </div>
+            </div>
+          </div>
+
+          <div class="visit">
+            <div class="visit-head">
+              <span class="visit-badge">第 7 診</span>
+              <span class="visit-date">（開兩週份）</span>
+              <span class="visit-note">回到主線問題</span>
+            </div>
+            <div class="visit-body">
+              <div class="visit-col">
+                <span class="visit-col-label">主要症狀</span>
+                第 1 週：腹部不再痛，脹氣改善；<br>
+                第 2 週：胃緊縮感回來＋頭暈＋容易受驚＋受驚即大量冒汗（回到初診狀態）
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">脈象</span>
+                雙寸上哨陰虛色；左寸浮圍沉持；左關緩脹；右關脹
+              </div>
+              <div class="visit-col">
+                <span class="visit-col-label">處方</span>
+                <span class="visit-rx-tag">理中湯加減</span>
+                ＋重新加回水藥<br>
+                後續：感冒外感處理 → 泌尿道感染（西醫兩週）→ 康復後回歸第七診方，繼續處理心陽與中焦，預計近期回診
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="keyline">追蹤心得：七診中共遇到兩次感冒、一次急性腸胃炎、一次泌尿道感染。每次急性期都暫時擱置主線方，先處理外感。值得注意的是，每次身體不適都會連帶誘發心慌恐慌，再次說明整體體質虛弱是根本問題。</div>
+      </article>
+
+      <!-- c6: 鑑別討論 -->
+      <article class="section" id="c6">
+        <h2>補充討論：心神不安的虛實鑑別</h2>
+        <p>講者補充了在實際臨床辨別心陽虛與水飲擾心的思路，重點在於脈象的細節差異。</p>
+        <div class="paradox">
+          <div class="side vir">
+            <h3>虛｜心陽虛弱</h3>
+            <p>脈象：寸部浮取無力，或浮取五粒但沉取才持；按提跟不上。</p>
+            <p>症狀：心慌易驚、自汗、忽冷忽熱、神不守舍、夜間汗出。</p>
+            <ul>
+              <li>桂枝甘草湯（辛甘化陽基礎方）</li>
+              <li>桂枝甘草龍骨牡蠣湯（加重鎮安神）</li>
+              <li>補坎益離丹（水藥，溫補心腎）</li>
+              <li>白通湯（尺部浮空微，陽虛較深）</li>
+              <li>附子理中湯（陽虛日久，脾腎同病）</li>
+            </ul>
+          </div>
+          <div class="side shi">
+            <h3>實｜水飲擾心</h3>
+            <p>脈象：左關浮微如棉，或左關有浮軟感；可能合併沉弦脈。</p>
+            <p>症狀：心悸、頭暈目眩、胸脅滿悶、水氣上衝感。</p>
+            <ul>
+              <li>苓桂朮甘湯（溫化水飲，水氣凌心）</li>
+              <li>茯苓四逆湯（陽虛兼水飲同時存在）</li>
+              <li>生脈飲（氣陰兩虛，可與四逆湯同用）</li>
+            </ul>
+            <p style="margin-top:10px;font-size:13px;color:var(--muted)">若心陽虛與水飲並存，可參考兩類處方合用。</p>
+          </div>
+        </div>
+        <div class="keyline">學習重點：心陽虛的「虛」與水飲擾心的「實」，鑑別關鍵在左寸浮取的力道，以及左關有無浮微如棉的水飲感。脈象不確定時，可從症狀的起伏模式做輔助判斷。</div>
+      </article>
+
+      <!-- c7: 臨床提問 -->
+      <article class="section" id="c7">
+        <h2>三個臨床提問</h2>
+        <p>報告者向學長提出以下三個臨床問題，作為本次病例分享的結語。</p>
+        <div class="diagram-row">
+          <div class="diagram-box" style="border-top:3px solid var(--rust)">
+            <b>問題一：更年期＋心陽虛</b>
+            <small>此患者已停經一年。若更年期症候群（潮熱、心血管收縮症狀）與心陽虛脈象同時並存，如何考量組方方向？兩者的病機有無重疊或相互加重？</small>
+          </div>
+          <div class="diagram-box" style="border-top:3px solid var(--teal)">
+            <b>問題二：心胃互動的切入順序</b>
+            <small>本案心神不安與中焦輸送不利並存，腸胃不穩又反過來誘發心慌。到底是「中焦上逆擾心」還是「心陽不足影響中焦升降」？臨床上如何判斷主次、決定先治哪個？</small>
+          </div>
+          <div class="diagram-box" style="border-top:3px solid var(--olive)">
+            <b>問題三：反覆外感的體質補固</b>
+            <small>此類自律神經失調、免疫偏弱的患者，病程中反覆外感、感染（本案有感冒、急性腸胃炎、泌尿道感染），每次感染又誘發恐慌。除了每次對症處理，有無穩固體質的方向？</small>
+          </div>
+        </div>
+      </article>
+
+      <!-- c8: 老師評論 -->
+      <article class="section" id="c8">
+        <div class="note-grid">
+          <div>
+            <h2>老師評論與 Q&A</h2>
+            <p><span class="slide-note">老師引導式提問（16:22）</span></p>
+            <p>老師沒有直接給答案，而是先問學生：「C4-C5 頸椎退化是原有的還是車禍才發現的？」學生回答：車禍後第一次做 CT 才發現，此前沒有症狀。接著老師問：<strong>「你覺得哪一個方向最有信心？如果診所只能開科中、你只能選一個切入點，你選哪個？」</strong></p>
+            <p>學生直覺回答：<em>先處理腸胃（中焦）</em>——因為腸胃脹氣是長久困擾，一直都有。</p>
+            <p>老師回應：<strong>「這個方向是比較好的選擇。」</strong>接著展開以下分析：</p>
+            <h3>老師觀點：中焦是根本</h3>
+            <ul>
+              <li><strong>病因還原：</strong>車禍術後大量服用抗生素 + 止痛藥 → 最大的傷害是傷害中焦（甚至傷下焦）。</li>
+              <li><strong>上下受累：</strong>中焦出問題之後，間接影響上面的心陽啟動，也影響下面腎陽的生發之氣——上下俱虛都可從中焦解釋。</li>
+              <li><strong>手麻手腫的另一種解讀：</strong>排除 C4-C5 頸椎因素後，手指腫脹麻木可能是中焦水飲或痰飲所造成。</li>
+              <li><strong>附子理中湯方向（鄭清安）：</strong>附子理中湯 + 龍骨牡蠣 + 肉桂，可同時處理心腎不交與心律問題——中焦建立後，心陽也跟著穩。</li>
+              <li><strong>後續感冒、泌尿道感染：</strong>這些反覆感染很多時候都跟中焦運化失調、免疫系統失調有關。</li>
+            </ul>
+            <div class="keyline">老師金句：「先從中焦把他的生發之氣建立起來，把水飲、痰飲、西藥造成的腸胃損傷先改善，中焦建立好之後，心陽的問題、下焦的感染問題，也許都會慢慢跟著改善。」</div>
+            <h3>三個提問的統一答案</h3>
+            <p>老師指出，學生提出的三個問題（更年期+心陽虛、心胃互動順序、反覆外感）其實都指向同一個答案：</p>
+            <div class="diagram-row">
+              <div class="diagram-box" style="border-top:3px solid var(--rust)">
+                <b>更年期問題</b>
+                <small>臨床表現是否真的跟更年期有關？先從中焦氣機著手，很多問題也許可以從一個角度慢慢解決，不需要各個擊破。</small>
+              </div>
+              <div class="diagram-box" style="border-top:3px solid var(--teal)">
+                <b>心胃互動順序</b>
+                <small>中焦先行——中焦建立後，心陽問題往往也跟著改善。抗生素是傷胃在先，心陽受累在後。</small>
+              </div>
+              <div class="diagram-box" style="border-top:3px solid var(--olive)">
+                <b>反覆感染體質</b>
+                <small>反覆感染、感冒，根源都是中焦免疫力失調。先把中焦寒濕處理好，免疫才能從根本恢復。</small>
+              </div>
+            </div>
+            <h3>「捷徑」思維——老師的臨床教學核心</h3>
+            <p>老師說：臨床上病人會丟很多問題進來，關鍵是怎麼去歸納，找到那個「捷徑」——一刀下去，他的很多症狀都能得到改善。</p>
+            <ul>
+              <li>把所有症狀的先後順序整理好：第一步用什麼？第二步用什麼？</li>
+              <li>慢慢建立屬於自己的「治病架構與流程」。</li>
+              <li>不要被症狀追著跑，要主動找到核心。</li>
+            </ul>
+            <div class="keyline">我的理解：這不只是技術教學，而是思維訓練——從「症狀清單」思維升級到「病機根源」思維。找到那個可以牽一髮動全身的節點，才是真正的臨床能力。</div>
+          </div>
+          <figure class="figure slide">
+            <img src="tcm_病例_html_assets/slide-teacher-framework.svg" alt="老師評論：中焦先行臨床邏輯圖">
+            <figcaption>流程圖：抗生素傷中焦 → 上下俱虛（心陽虛 + 下焦寒濕）→ 先復中焦，上下同治。</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- c9: 老師補充案例 -->
+      <article class="section" id="c9">
+        <h2>老師補充案例</h2>
+        <p class="lead">老師以自己診所的一個病人為例，示範「中焦先行」思路如何解決多症並存的臨床困境。</p>
+
+        <h3>案例背景</h3>
+        <p>患者曾裝過雙 J 管（腎臟問題），此後長期反覆泌尿道管發炎。最近有三個主要問題：</p>
+        <div class="diagram-row">
+          <div class="diagram-box" style="border-top:3px solid var(--rust)">
+            <b>① 蛋白尿</b>
+            <small>持續存在，西醫檢查中。老師指出，若只針對蛋白尿開藥，會讓思路變亂。</small>
+          </div>
+          <div class="diagram-box" style="border-top:3px solid var(--olive)">
+            <b>② 代謝問題</b>
+            <small>數值偏高但尚屬輕微，需長期追蹤。</small>
+          </div>
+          <div class="diagram-box" style="border-top:3px solid var(--blue)">
+            <b>③ 反覆性陰道感染</b>
+            <small>反覆發作，使用抗生素初期有效，後來越吃越無效。</small>
+          </div>
+        </div>
+
+        <h3>老師的脈象分析</h3>
+        <p>老師從脈象切入，先看<strong>尺部</strong>（因患者主訴與下焦相關）：</p>
+        <div class="arrow">
+          <div class="node"><b>左關弦緊</b><small>心下有水氣凝集，是病機核心所在</small></div>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="node"><b>尺部有病位</b><small>整體偏寒，非熱證</small></div>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="node"><b>寒濕往下</b><small>水濕下注 → 下焦感染、白帶、蛋白尿</small></div>
+        </div>
+
+        <h3>關鍵教學：越吃越無效的陷阱</h3>
+        <p>老師說：「如果你聽到病人說抗生素剛開始有效，吃第二輪第三輪就沒效了——那你就要提醒自己：</p>
+        <div class="paradox">
+          <div class="side vir">
+            <h3>錯誤思路（無效路徑）</h3>
+            <p>繼續用消炎藥、清熱解毒藥針對感染本身處理。</p>
+            <p>→ 絕對沒效，而且會讓中焦繼續受損。</p>
+            <p>就像針對蛋白尿「這裡開個藥，那裡開個藥」——心會很亂，結果反而處理不好任何一個。</p>
+          </div>
+          <div class="side shi">
+            <h3>正確思路（回到根源）</h3>
+            <p>代表中焦已垮。抗生素讓中焦的動能與熱能減少，整體免疫失調。</p>
+            <p>→ 先把中焦寒濕處理好，從根本恢復運化能力。</p>
+            <p>從中焦先行，水濕不再下注，下焦感染自然緩解。</p>
+          </div>
+        </div>
+
+        <h3>治療結果</h3>
+        <p>老師告訴學生，這個患者昨天回診說了一句話：<strong>「太神奇了！他說他已經很久沒有小便是清的了。」</strong></p>
+        <ul>
+          <li>服藥一週後，小便從混濁轉為清澈。</li>
+          <li>會陰部感染不適明顯降低，分泌物減少。</li>
+          <li>處理的不是感染本身，而是中焦寒濕的根源。</li>
+        </ul>
+
+        <h3>老師結語：病人主述 ≠ 治療切入點</h3>
+        <div class="paradox">
+          <div class="side vir">
+            <h3>病人主述（表象）</h3>
+            <p>蛋白尿、反覆感染、陰道炎——每一個看起來都是「急症」「要馬上處理的問題」。</p>
+          </div>
+          <div class="side shi">
+            <h3>治療邏輯（根源）</h3>
+            <p>左關弦緊 → 心下水氣 → 水濕下注。先溫化中焦寒濕，一刀解決所有下焦問題。</p>
+          </div>
+        </div>
+        <div class="keyline">老師金句：「有時候病人在講的時候你可以注意，但是你一定要再去看看——是單純只有這裡的問題嗎？如果他是因為其他問題造成的而你沒有辦法注意到，那就有點可惜。很多症狀的關鍵其實在中焦。」</div>
+      </article>
+
+      <!-- Diagrams section -->
+      <article class="section" id="diagrams">
+        <h2>概念圖解</h2>
+        <h3>治療路徑：三個層次</h3>
+        <div class="arrow">
+          <div class="node"><b>急性問題</b><small>感冒、急性腸胃炎、泌尿道感染：先對症處理，暫擱主線方</small></div>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="node"><b>中焦氣機</b><small>腹脹、打嗝、脹滿：溫膽湯、半夏瀉心湯、理中湯動態調整</small></div>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="node"><b>心陽根本</b><small>恐慌、易驚、自汗：桂甘龍牡湯、補坎益離丹長期方向</small></div>
+        </div>
+
+        <h3>心智圖</h3>
+        <div class="mindmap">
+          <div class="root-node">車禍後恐慌誘發：心陽虛與中焦氣機失調並治</div>
+          <div class="branches">
+            <div class="branch"><b>核心病機</b><span>心陽虛：桂甘龍牡湯、補坎益離丹；中焦失調：溫膽湯、半夏瀉心湯</span></div>
+            <div class="branch"><b>動態辨證</b><span>七診中每次脈象細節不同，在心陽虛主線上持續微調中焦處方，遇外感急症則先處理</span></div>
+            <div class="branch"><b>老師核心教學</b><span>中焦先行——抗生素傷中焦最深，先復中焦則心陽與下焦問題可同時改善（附子理中湯方向）</span></div>
+            <div class="branch"><b>「捷徑」思維</b><span>找到核心病位，一刀下去多症同時改善；病人主述≠治療切入點，要找到根本節點</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Terms -->
+      <article class="section" id="terms">
+        <h2>術語卡片</h2>
+        <div class="terms">
+          <div class="term"><b>心陽虛</b><span>心陽氣不足，無力溫煦、振奮神明。主症：心慌、易驚、自汗、忽冷忽熱、神不守舍。</span></div>
+          <div class="term"><b>中焦氣機失調</b><span>脾胃升降功能紊亂，氣滯不通。主症：脘腹脹滿、打嗝、噯氣上逆、食後不適。</span></div>
+          <div class="term"><b>補坎益離丹</b><span>溫補心腎陽氣之方，「坎」為腎水，「離」為心火，補腎陽以溫心陽。本案用作水藥長期服。</span></div>
+          <div class="term"><b>桂枝甘草龍骨牡蠣湯</b><span>桂枝甘草湯（辛甘化陽）加龍骨牡蠣（重鎮安神）。用於心陽虛、神不守舍、心慌易驚。</span></div>
+          <div class="term"><b>苓桂朮甘湯</b><span>茯苓＋桂枝＋白朮＋甘草，溫化水飲、降逆平衝。用於水飲凌心、頭暈心悸。</span></div>
+          <div class="term"><b>溫膽湯</b><span>半夏、竹茹、枳實等，化痰和胃、清膽安神。用於膽胃不和、痰熱擾心。</span></div>
+          <div class="term"><b>半夏瀉心湯</b><span>辛開苦降之代表方，解中焦寒熱痞結。用於心下痞、嘔噦、腸鳴。</span></div>
+          <div class="term"><b>葛根黃芩黃連湯</b><span>清熱利濕止利。用於熱利、腸胃濕熱導致的腹瀉。本案第五診急性腹瀉期使用。</span></div>
+          <div class="term"><b>藿香正氣散</b><span>芳香化濕、理氣和中。用於外感夾濕、腸胃不適，有明顯濕氣感時加用。</span></div>
+          <div class="term"><b>參苓白朮散</b><span>健脾益氣，滲濕止瀉。腸胃功能已趨穩定後，用於鞏固脾胃功能。</span></div>
+          <div class="term"><b>暈針</b><span>針灸過程中出現暈厥前反應，如血壓驟降、冷汗、面色蒼白。本案因此改用雷射針。</span></div>
+          <div class="term"><b>少量平服法</b><span>將水藥分成多次、每次少量、平躺服用的方法。可減少水藥對腸胃的衝擊，適用於脾胃虛弱者。</span></div>
+          <div class="term"><b>附子理中湯＋龍骨牡蠣＋肉桂</b><span>鄭清安的心腎不交用方方向。先溫中焦，加龍骨牡蠣鎮安，肉桂引火歸元，可同時處理心陽虛與心律問題。</span></div>
+          <div class="term"><b>中焦先行</b><span>老師核心教學：抗生素久服傷中焦最深；先復中焦運化生發之氣，上焦心陽與下焦寒濕可同步改善，是多症並存的「捷徑」。</span></div>
+          <div class="term"><b>左關弦緊（心下水氣）</b><span>老師補充案例的關鍵脈象：左關弦緊代表心下有水氣凝集，水濕往下注可造成下焦感染、帶下、蛋白尿等。</span></div>
+        </div>
+      </article>
+
+      <!-- Questions -->
+      <article class="section" id="questions">
+        <h2>待追問問題</h2>
+        <div class="questions">
+          <div class="question"><b>更年期與心陽虛</b><span>停經後的更年期症候群（潮熱、盜汗、心血管症狀）與心陽虛症狀高度重疊，如何從脈象或病因上做鑑別？</span></div>
+          <div class="question"><b>心胃相互因果</b><span>臨床上如何快速判斷是「胃病及心」還是「心病及胃」？有沒有脈象上的提示？</span></div>
+          <div class="question"><b>附子類方的適用時機</b><span>本案出現「一回到心陽虛狀態」的反覆，附子理中湯、白通湯的選用時機與桂枝甘草湯系有何不同？</span></div>
+        </div>
+      </article>
+
+    </div><!-- .content -->
+  </section>
+
+  <p class="footer-note">來源：YouTube 直播（15:00–51:18 段）。涵蓋學生報告（c1–c7）＋老師評論與Q&A（c8）＋老師補充案例（c9）。影片為讀書會不公開連結，僅供成員閱覽。</p>
+</main>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+  const CLIP_START = 900;   // 15:00
+  const CLIP_END   = 3078;  // 51:18
+  const CLIP_DUR   = CLIP_END - CLIP_START;
+
+  let player;
+  const progressBar = document.getElementById('progressBar');
+  const timeLabel   = document.getElementById('timeLabel');
+  const buttons     = Array.from(document.querySelectorAll('[data-seek]'));
+
+  function fmt(seconds) {
+    const total = Math.max(0, Math.floor(seconds || 0));
+    const m = String(Math.floor(total / 60)).padStart(2, '0');
+    const s = String(total % 60).padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function seekTo(offsetSeconds, target) {
+    if (player && typeof player.seekTo === 'function') {
+      player.seekTo(CLIP_START + Number(offsetSeconds), true);
+      player.playVideo();
+    }
+    if (target) document.getElementById(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    buttons.forEach(btn => btn.classList.toggle('active', btn.dataset.target === target));
+  }
+
+  buttons.forEach(btn => btn.addEventListener('click', () => seekTo(btn.dataset.seek, btn.dataset.target)));
+
+  window.onYouTubeIframeAPIReady = function() {
+    player = new YT.Player('ytPlayer', {
+      width: '100%',
+      height: '100%',
+      videoId: 'Xv1aHvjEbfI',
+      playerVars: {
+        start: CLIP_START,
+        end: CLIP_END,
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,
+      }
+    });
+    setInterval(() => {
+      if (!player || typeof player.getCurrentTime !== 'function') return;
+      try {
+        const current  = player.getCurrentTime();
+        const clipped  = Math.max(0, current - CLIP_START);
+        const pct      = Math.min(100, (clipped / CLIP_DUR) * 100);
+        progressBar.style.width = `${pct}%`;
+        timeLabel.textContent   = `${fmt(clipped)} / ${fmt(CLIP_DUR)}`;
+      } catch (_) {}
+    }, 250);
+  };
+</script>
+</body>
+</html>
