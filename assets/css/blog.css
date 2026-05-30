@@ -416,3 +416,42 @@ a:hover {
     font-size: 28px;
   }
 }
+/* ── Collapsible UI ── */
+.site-header.nav-hidden .site-nav,
+.site-header.nav-hidden .theme-toggle {
+  display: none;
+}
+.site-header.nav-hidden .site-header-inner {
+  min-height: 44px;
+}
+.site-header.nav-hidden .ui-toggles {
+  margin-left: auto;
+}
+
+.layout.sidebar-hidden {
+  grid-template-columns: minmax(0, 1fr);
+}
+.layout.sidebar-hidden .site-sidebar {
+  display: none;
+}
+
+.ui-toggles {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.ui-toggle-btn {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 5px 9px;
+  transition: background 0.15s, color 0.15s;
+}
+.ui-toggle-btn:hover {
+  background: var(--surface-soft);
+  color: var(--text);
+}
