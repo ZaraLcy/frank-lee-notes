@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中醫新手村・世界地圖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#e9dcbe;            /* 茶染宣紙 */
+    --paper-warm:#ecdfc0;
+    --paper-edge:#c7b083;
+    --ink:#2c2117;             /* 墨 */
+    --ink-soft:#5c4a34;
+    --line:#7c6242;            /* 赭線 */
+    --seal:#a23b2c;            /* 朱印紅 */
+    --seal-deep:#7d2a1f;
+    --gold:#b6883b;            /* 鎏金 */
+    --gold-soft:#d8b15e;
+    --jade:#7d9a6f;            /* 青瓷綠 */
+    --jade-soft:#b7c8a4;
+    --r1:#ecdcb4;             /* 新手村 */
+    --r2:#e4d3a3;             /* 整備區 */
+    --r3:#cfd8b6;             /* 診斷沼澤 */
+    --r4:#e7d0a0;             /* 氣機之殿 */
+    --serif:"Noto Serif TC", "Songti TC","STSong",serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--serif);
+    background:
+      radial-gradient(1200px 600px at 18% 8%, #f4ead0 0%, transparent 60%),
+      radial-gradient(1000px 700px at 88% 92%, #e0cfa4 0%, transparent 55%),
+      #cdb98e;
+    color:var(--ink);
+    padding:34px 16px 56px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  /* ── 標題 ── */
+  .map-title-wrap{text-align:center;margin-bottom:22px;}
+  .map-title-wrap .eyebrow{
+    font-size:13px;letter-spacing:.55em;color:var(--seal);
+    font-weight:600;margin:0 0 10px;text-indent:.55em;
+  }
+  .map-title-wrap h1{
+    font-size:clamp(30px,5vw,52px);
+    font-weight:900;margin:0;letter-spacing:.22em;text-indent:.22em;
+    color:var(--ink);line-height:1;
+  }
+  .rule{
+    width:clamp(180px,40%,340px);height:0;margin:16px auto 12px;
+    border:none;border-top:1.5px solid var(--line);position:relative;
+  }
+  .rule::after{
+    content:"❖";position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-54%);background:transparent;
+    color:var(--seal);font-size:15px;padding:0 12px;
+    background:radial-gradient(circle,#e9dcbe 60%,transparent 62%);
+  }
+  .map-title-wrap .sub{
+    margin:0;font-size:clamp(13px,1.7vw,17px);color:var(--ink-soft);
+    letter-spacing:.16em;font-weight:500;
+  }
+
+  /* ── 地圖外框：宣紙裝裱 ── */
+  .map-frame{
+    position:relative;border-radius:6px;padding:14px;
+    background:linear-gradient(135deg,#d8c499,#cdb98c);
+    box-shadow:0 18px 46px rgba(54,34,14,.42), inset 0 0 0 1px rgba(255,250,235,.25);
+  }
+  .map-frame::before{
+    content:"";position:absolute;inset:8px;border:2px solid var(--line);
+    border-radius:4px;pointer-events:none;z-index:6;
+    box-shadow:inset 0 0 0 4px rgba(214,178,110,.55), inset 0 0 22px rgba(60,38,16,.18);
+  }
+  svg.map{display:block;width:100%;height:auto;border-radius:3px;position:relative;z-index:1;}
+  svg text{font-family:var(--serif);}
+
+  /* ── 節點 ── */
+  svg .node{ filter:drop-shadow(0 2px 2.5px rgba(46,30,14,.4)); }
+  svg .node-emoji{font-size:18px;text-anchor:middle;}
+  svg .node-num{font-size:11px;font-weight:700;fill:#fff8ea;text-anchor:middle;}
+  svg .node-label{font-size:12px;font-weight:600;fill:var(--ink);text-anchor:middle;letter-spacing:.02em;}
+  svg .node-chip{fill:#fbf2da;stroke:var(--line);stroke-width:1;}
+  svg .ring{fill:none;stroke:var(--seal);stroke-width:2.5;opacity:0;}
+  svg .hit{fill:transparent;}
+  /* 區域配色 */
+  svg .r-village .node-main{fill:#fbf2d8;stroke:var(--line);stroke-width:3;}
+  svg .r-village .node-badge{fill:var(--seal);}
+  svg .r-outpost .node-main{fill:#fbeccb;stroke:#9a7521;stroke-width:3;}
+  svg .r-outpost .node-badge{fill:#9a7521;}
+  svg .r-swamp   .node-main{fill:#eef4e2;stroke:var(--jade);stroke-width:3;}
+  svg .r-swamp   .node-badge{fill:#5f7d50;}
+  svg .r-swamp   .node-chip{fill:#eef4e2;stroke:#5f7d50;}
+  svg .r-temple  .node-main{fill:#fbf0d4;stroke:var(--gold);stroke-width:3;}
+  svg .r-temple  .node-badge{fill:var(--gold);}
+  svg .r-temple  .node-chip{fill:#fbf0d4;stroke:var(--gold);}
+  /* hover / focus 微互動 */
+  svg a.nodelink{cursor:pointer;}
+  svg a.nodelink:focus{outline:none;}
+  svg a.nodelink:hover .node, svg a.nodelink:focus .node{
+    filter:drop-shadow(0 4px 5px rgba(46,30,14,.5)) brightness(1.05);
+  }
+  svg a.nodelink:hover .ring, svg a.nodelink:focus .ring{ opacity:.92; }
+  svg a.nodelink:hover .node-chip, svg a.nodelink:focus .node-chip{ stroke:var(--seal); stroke-width:1.6; }
+
+  .hint{
+    text-align:center;margin-top:16px;font-size:13.5px;color:var(--ink-soft);
+    letter-spacing:.05em;line-height:1.75;
+  }
+  .hint b{color:var(--seal);font-weight:700;}
+
+  /* ── 跟隨站點的小方框 ── */
+  .map-frame{ } /* 已 position:relative */
+  .callout{
+    position:absolute; left:0; top:0; z-index:10; width:232px; max-width:74%;
+    background:linear-gradient(180deg,#fbf3dd,#f1e3c2);
+    border:1.5px solid var(--line); border-top:4px solid var(--seal);
+    border-radius:10px; padding:11px 13px 12px;
+    box-shadow:0 9px 24px rgba(54,34,14,.3);
+    opacity:0; font-family:var(--serif);
+  }
+  .callout-head{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+  .callout-num{
+    flex:0 0 auto;height:22px;padding:0 9px;border-radius:11px;
+    background:var(--seal);color:#fff3df;font-size:13px;font-weight:900;
+    display:inline-flex;align-items:center;
+  }
+  .callout-num::before{content:"第 ";font-size:10px;font-weight:600;opacity:.85;}
+  .callout-num::after{content:" 關";font-size:10px;font-weight:600;opacity:.85;}
+  .callout-title{margin:0;font-size:16px;font-weight:900;color:var(--ink);letter-spacing:.03em;}
+  .callout-blurb{margin:0 0 9px;font-size:13px;line-height:1.6;color:var(--ink-soft);}
+  .callout-read{
+    display:inline-block;text-decoration:none;
+    background:var(--seal);color:#fff3df;font-weight:700;font-size:13px;
+    padding:6px 13px;border-radius:16px;border:1.5px solid var(--seal-deep);
+    transition:filter .15s, transform .15s;
+  }
+  .callout-read:hover{filter:brightness(1.1);transform:translateY(-1px);}
+
+  /* 動畫初始隱藏由 JS 控制；無 JS 時全部顯示 */
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="map-title-wrap">
+    <p class="eyebrow">中醫充電站 ・ 自學者の旅程</p>
+    <h1>中醫新手村</h1>
+    <hr class="rule">
+    <p class="sub">世界地圖 ── 從寒熱基礎，穿越診斷沼澤，登臨氣機之殿</p>
+  </div>
+
+  <div class="map-frame">
+    <svg class="map" viewBox="0 0 1200 820" role="img"
+         aria-label="中醫新手村 RPG 世界地圖，四大區域沿蜿蜒小徑由左下往右上排列，共 17 關節點，每關可點擊前往文章">
+
+      <defs>
+        <filter id="paper" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.014 0.02" numOctaves="4" seed="9" result="n"/>
+          <feColorMatrix in="n" type="matrix"
+            values="0 0 0 0 0.42  0 0 0 0 0.31  0 0 0 0 0.17  0 0 0 0.06 0" result="t"/>
+          <feComposite in="t" in2="SourceGraphic" operator="over"/>
+        </filter>
+        <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="11" result="t"/>
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="3"/></filter>
+        <filter id="rough-soft"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="t"/>
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="2"/></filter>
+        <filter id="mist" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="14"/></filter>
+        <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" flood-color="#2e1e0e" flood-opacity="0.4"/></filter>
+        <radialGradient id="vign" cx="50%" cy="48%" r="75%">
+          <stop offset="58%" stop-color="#000" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#3a2410" stop-opacity="0.34"/>
+        </radialGradient>
+        <radialGradient id="templeGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffe9b0" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#ffe9b0" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="travelerG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c0492f"/><stop offset="100%" stop-color="#7d2a1f"/>
+        </linearGradient>
+      </defs>
+
+      <!-- 底紙 -->
+      <rect x="0" y="0" width="1200" height="820" fill="#e9dcbe"/>
+      <rect x="0" y="0" width="1200" height="820" fill="#e9dcbe" filter="url(#paper)" opacity="0.85"/>
+
+      <!-- 四大區域色塊 -->
+      <g filter="url(#rough-soft)" stroke="#9a7d52" stroke-width="1.6" stroke-dasharray="2 7" opacity="0.92">
+        <path class="region-wash" d="M40,820 L40,470 C150,430 300,455 420,500 C470,560 440,680 470,820 Z" fill="var(--r1)"/>
+        <path class="region-wash" d="M470,820 C440,680 470,560 470,500 C560,470 640,500 700,470 C740,560 700,700 690,820 Z" fill="var(--r2)"/>
+        <path class="region-wash" d="M420,500 C470,560 440,680 470,500 C560,470 640,500 700,470 C760,360 700,250 760,180 C620,150 470,200 400,300 C360,380 390,440 420,500 Z" fill="var(--r3)"/>
+        <path class="region-wash" d="M760,180 C700,250 760,360 700,470 C740,560 700,700 690,820 L1160,820 L1160,140 C1050,90 900,110 760,180 Z" fill="var(--r4)"/>
+      </g>
+
+      <!-- 裝飾層：沼澤霧、水紋、山、樹、神殿光 -->
+      <g class="deco-layer">
+        <ellipse cx="600" cy="265" rx="180" ry="80" fill="#f3f6ea" opacity="0.5" filter="url(#mist)"/>
+        <ellipse cx="980" cy="240" rx="120" ry="90" fill="url(#templeGlow)"/>
+        <g opacity="0.55" filter="url(#rough-soft)">
+          <g stroke="#5d7d63" stroke-width="2" fill="none" opacity="0.7">
+            <path d="M470,250 q20,-10 40,0 t40,0"/><path d="M480,290 q20,-10 40,0 t40,0"/>
+            <path d="M600,225 q20,-10 40,0 t40,0"/>
+          </g>
+          <g fill="none" stroke="#8a6b46" stroke-width="2.5">
+            <path d="M880,300 l30,-46 l30,46 z"/><path d="M930,320 l34,-52 l34,52 z"/><path d="M1000,292 l28,-42 l28,42 z"/>
+          </g>
+          <g fill="#5e7d4f" opacity="0.8">
+            <circle cx="120" cy="640" r="11"/><circle cx="138" cy="650" r="9"/>
+            <circle cx="200" cy="720" r="10"/><circle cx="216" cy="728" r="8"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- 蜿蜒小徑：底層赭線(可描繪) + 上層金虛線足跡 -->
+      <g filter="url(#rough)">
+        <path id="trail"
+          d="M110,760 C170,700 150,640 210,610 C280,575 250,520 300,510 C360,498 380,560 420,560
+             C470,560 500,510 540,520 C600,535 600,470 640,470 C700,470 720,440 760,400
+             C540,470 560,360 600,310 C640,265 700,290 740,250 C800,195 820,250 880,240
+             C950,228 940,300 1000,290 C1050,282 1040,235 1080,210"
+          fill="none" stroke="#7a5a3a" stroke-width="12" stroke-linecap="round" opacity="0.6"/>
+        <path id="trail-dots"
+          d="M110,760 C170,700 150,640 210,610 C280,575 250,520 300,510 C360,498 380,560 420,560
+             C470,560 500,510 540,520 C600,535 600,470 640,470 C700,470 720,440 760,400
+             C540,470 560,360 600,310 C640,265 700,290 740,250 C800,195 820,250 880,240
+             C950,228 940,300 1000,290 C1050,282 1040,235 1080,210"
+          fill="none" stroke="#d8b15e" stroke-width="6" stroke-linecap="round"
+          stroke-dasharray="1 15" stroke-linejoin="round"/>
+      </g>
+
+      <!-- 區域標題小匾 -->
+      <g font-weight="700">
+        <g class="region-wash" transform="translate(70,452)">
+          <rect x="-8" y="-23" width="256" height="34" rx="4" fill="#fbf2d8" opacity="0.82" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="4" y="0" font-size="19" fill="var(--ink)">🏘 新手村・寒熱基礎</text>
+        </g>
+        <g class="region-wash" transform="translate(492,793)">
+          <rect x="-8" y="-23" width="214" height="34" rx="4" fill="#fbf2d8" opacity="0.82" stroke="var(--line)" stroke-width="1.4"/>
+          <text x="4" y="0" font-size="19" fill="var(--ink)">🎒 整備區・視野筆記</text>
+        </g>
+        <g class="region-wash" transform="translate(418,172)">
+          <rect x="-8" y="-23" width="178" height="34" rx="4" fill="#eef4e2" opacity="0.85" stroke="#5f7d50" stroke-width="1.4"/>
+          <text x="4" y="0" font-size="19" fill="var(--ink)">🌫 診斷沼澤</text>
+        </g>
+        <g class="region-wash" transform="translate(878,132)">
+          <rect x="-8" y="-23" width="190" height="34" rx="4" fill="#fbf0d4" opacity="0.85" stroke="var(--gold)" stroke-width="1.4"/>
+          <text x="4" y="0" font-size="19" fill="var(--ink)">⚡ 氣機之殿</text>
+        </g>
+      </g>
+
+      <!-- Boss 旗 -->
+      <g>
+        <g class="boss-flag" transform="translate(440,418)" filter="url(#soft)">
+          <rect x="-19" y="-19" width="38" height="38" rx="5" transform="rotate(45)" fill="var(--seal)" stroke="var(--seal-deep)" stroke-width="2.5"/>
+          <text x="0" y="6" font-size="17" text-anchor="middle">💀</text>
+          <rect x="-66" y="24" width="132" height="22" rx="4" fill="var(--seal-deep)"/>
+          <text x="0" y="39" font-size="12.5" text-anchor="middle" fill="#ffe8c2" font-weight="700">魔王・寒熱顛倒怪</text>
+        </g>
+        <g class="boss-flag" transform="translate(522,198)" filter="url(#soft)">
+          <rect x="-19" y="-19" width="38" height="38" rx="5" transform="rotate(45)" fill="var(--seal)" stroke="var(--seal-deep)" stroke-width="2.5"/>
+          <text x="0" y="6" font-size="17" text-anchor="middle">🐍</text>
+          <rect x="-78" y="24" width="156" height="22" rx="4" fill="var(--seal-deep)"/>
+          <text x="0" y="39" font-size="12.5" text-anchor="middle" fill="#ffe8c2" font-weight="700">魔王・外感內傷雙頭蛇</text>
+        </g>
+        <g class="boss-flag" transform="translate(1078,300)" filter="url(#soft)">
+          <rect x="-21" y="-21" width="42" height="42" rx="5" transform="rotate(45)" fill="var(--seal)" stroke="var(--seal-deep)" stroke-width="2.5"/>
+          <text x="0" y="7" font-size="19" text-anchor="middle">👹</text>
+          <rect x="-72" y="26" width="144" height="22" rx="4" fill="var(--seal-deep)"/>
+          <text x="0" y="41" font-size="12.5" text-anchor="middle" fill="#ffe8c2" font-weight="700">魔王・九氣亂流</text>
+        </g>
+      </g>
+
+      <!-- 補給站 -->
+      <g class="supply" transform="translate(605,560)" filter="url(#soft)">
+        <rect x="-15" y="-15" width="30" height="30" rx="6" fill="var(--jade)" stroke="#1c5246" stroke-width="2.5"/>
+        <text x="0" y="6" font-size="16" text-anchor="middle">⛺</text>
+        <rect x="-38" y="18" width="76" height="20" rx="4" fill="#1c5246"/>
+        <text x="0" y="32" font-size="11.5" text-anchor="middle" fill="#dff5ee" font-weight="700">補給站</text>
+      </g>
+
+      <!-- ===== 17 關節點（外層 <a> 連文章）===== -->
+      <g class="nodes">
+        <!-- 區1 新手村 1-6 -->
+        <a class="nodelink r-village" href="https://franklee529.substack.com/p/2026w14" target="_blank" rel="noopener" aria-label="第1關 寒熱用藥">
+          <g class="node" transform="translate(110,760)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏠</text><circle class="node-badge" cx="16" cy="-15" r="11.5"/><text class="node-num" x="16" y="-11">1</text><rect class="node-chip" x="-60" y="25" width="120" height="21" rx="6"/><text class="node-label" x="0" y="40">寒熱用藥</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-village" href="https://franklee529.substack.com/p/2-5fc" target="_blank" rel="noopener" aria-label="第2關 辛甘發散為陽">
+          <g class="node" transform="translate(210,610)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏠</text><circle class="node-badge" cx="16" cy="-15" r="11.5"/><text class="node-num" x="16" y="-11">2</text><rect class="node-chip" x="-79" y="25" width="158" height="21" rx="6"/><text class="node-label" x="0" y="40">辛甘發散為陽</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-village" href="https://franklee529.substack.com/p/3-b5e" target="_blank" rel="noopener" aria-label="第3關 酸苦湧瀉為陰">
+          <g class="node" transform="translate(300,510)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏠</text><circle class="node-badge" cx="16" cy="-15" r="11.5"/><text class="node-num" x="16" y="-11">3</text><rect class="node-chip" x="-79" y="25" width="158" height="21" rx="6"/><text class="node-label" x="0" y="40">酸苦湧瀉為陰</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-village" href="https://franklee529.substack.com/p/4-7a3" target="_blank" rel="noopener" aria-label="第4關 寒熱並列">
+          <g class="node" transform="translate(420,560)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏠</text><circle class="node-badge" cx="16" cy="-15" r="11.5"/><text class="node-num" x="16" y="-11">4</text><rect class="node-chip" x="-60" y="25" width="120" height="21" rx="6"/><text class="node-label" x="0" y="40">寒熱並列</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-village" href="https://franklee529.substack.com/p/5" target="_blank" rel="noopener" aria-label="第5關 複習">
+          <g class="node" transform="translate(300,440)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏠</text><circle class="node-badge" cx="16" cy="-15" r="11.5"/><text class="node-num" x="16" y="-11">5</text><rect class="node-chip" x="-40" y="25" width="80" height="21" rx="6"/><text class="node-label" x="0" y="40">複習</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-village" href="https://franklee529.substack.com/p/6-06c" target="_blank" rel="noopener" aria-label="第6關 用寒熱看條文">
+          <g class="node" transform="translate(370,360)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏠</text><circle class="node-badge" cx="16" cy="-15" r="11.5"/><text class="node-num" x="16" y="-11">6</text><rect class="node-chip" x="-79" y="25" width="158" height="21" rx="6"/><text class="node-label" x="0" y="40">用寒熱看條文</text><circle class="hit" r="34"/></g>
+        </a>
+        <!-- 區2 整備區 7-8 -->
+        <a class="nodelink r-outpost" href="https://franklee529.substack.com/p/7-4e6" target="_blank" rel="noopener" aria-label="第7關 閱讀處方例">
+          <g class="node" transform="translate(540,520)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🎒</text><circle class="node-badge" cx="16" cy="-15" r="11.5"/><text class="node-num" x="16" y="-11">7</text><rect class="node-chip" x="-70" y="25" width="140" height="21" rx="6"/><text class="node-label" x="0" y="40">閱讀處方例</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-outpost" href="https://franklee529.substack.com/p/8-e0e" target="_blank" rel="noopener" aria-label="第8關 編織學習寶典">
+          <g class="node" transform="translate(640,470)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">📖</text><circle class="node-badge" cx="16" cy="-15" r="11.5"/><text class="node-num" x="16" y="-11">8</text><rect class="node-chip" x="-79" y="25" width="158" height="21" rx="6"/><text class="node-label" x="0" y="40">編織學習寶典</text><circle class="hit" r="34"/></g>
+        </a>
+        <!-- 區3 診斷沼澤 9-13 -->
+        <a class="nodelink r-swamp" href="https://franklee529.substack.com/p/9" target="_blank" rel="noopener" aria-label="第9關 望色診脈">
+          <g class="node" transform="translate(760,400)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🌿</text><circle class="node-badge" cx="16" cy="-15" r="11.5"/><text class="node-num" x="16" y="-11">9</text><rect class="node-chip" x="-60" y="25" width="120" height="21" rx="6"/><text class="node-label" x="0" y="40">望色診脈</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-swamp" href="https://franklee529.substack.com/p/10" target="_blank" rel="noopener" aria-label="第10關 外感內傷初分">
+          <g class="node" transform="translate(600,310)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🌿</text><circle class="node-badge" cx="16" cy="-15" r="12"/><text class="node-num" x="16" y="-11">10</text><rect class="node-chip" x="-79" y="25" width="158" height="21" rx="6"/><text class="node-label" x="0" y="40">外感內傷初分</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-swamp" href="https://franklee529.substack.com/p/11" target="_blank" rel="noopener" aria-label="第11關 觀察流動性">
+          <g class="node" transform="translate(740,250)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🌿</text><circle class="node-badge" cx="16" cy="-15" r="12"/><text class="node-num" x="16" y="-11">11</text><rect class="node-chip" x="-70" y="25" width="140" height="21" rx="6"/><text class="node-label" x="0" y="40">觀察流動性</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-swamp" href="https://franklee529.substack.com/p/12" target="_blank" rel="noopener" aria-label="第12關 後設思考">
+          <g class="node" transform="translate(640,180)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🌿</text><circle class="node-badge" cx="16" cy="-15" r="12"/><text class="node-num" x="16" y="-11">12</text><rect class="node-chip" x="-60" y="25" width="120" height="21" rx="6"/><text class="node-label" x="0" y="40">後設思考</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-swamp" href="https://franklee529.substack.com/p/13-436" target="_blank" rel="noopener" aria-label="第13關 中醫式人體認識">
+          <g class="node" transform="translate(770,150)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🌿</text><circle class="node-badge" cx="16" cy="-15" r="12"/><text class="node-num" x="16" y="-11">13</text><rect class="node-chip" x="-86" y="25" width="172" height="21" rx="6"/><text class="node-label" x="0" y="40">中醫式人體認識</text><circle class="hit" r="34"/></g>
+        </a>
+        <!-- 區4 氣機之殿 14-17 -->
+        <a class="nodelink r-temple" href="https://franklee529.substack.com/p/14-e2e" target="_blank" rel="noopener" aria-label="第14關 中藏經勞傷論">
+          <g class="node" transform="translate(880,240)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏛</text><circle class="node-badge" cx="16" cy="-15" r="12"/><text class="node-num" x="16" y="-11">14</text><rect class="node-chip" x="-79" y="25" width="158" height="21" rx="6"/><text class="node-label" x="0" y="40">中藏經勞傷論</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-temple" href="https://franklee529.substack.com/p/15-e71" target="_blank" rel="noopener" aria-label="第15關 誤藥變證">
+          <g class="node" transform="translate(960,200)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏛</text><circle class="node-badge" cx="16" cy="-15" r="12"/><text class="node-num" x="16" y="-11">15</text><rect class="node-chip" x="-65" y="25" width="130" height="21" rx="6"/><text class="node-label" x="0" y="40">誤藥變證</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-temple" href="https://franklee529.substack.com/p/16-2" target="_blank" rel="noopener" aria-label="第16關 複習">
+          <g class="node" transform="translate(1000,290)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏛</text><circle class="node-badge" cx="16" cy="-15" r="12"/><text class="node-num" x="16" y="-11">16</text><rect class="node-chip" x="-40" y="25" width="80" height="21" rx="6"/><text class="node-label" x="0" y="40">複習</text><circle class="hit" r="34"/></g>
+        </a>
+        <a class="nodelink r-temple" href="https://franklee529.substack.com/p/17" target="_blank" rel="noopener" aria-label="第17關 舉痛論九氣">
+          <g class="node" transform="translate(1080,210)"><circle class="ring" r="28"/><circle class="node-main" r="20"/><text class="node-emoji" y="6">🏛</text><circle class="node-badge" cx="16" cy="-15" r="12"/><text class="node-num" x="16" y="-11">17</text><rect class="node-chip" x="-70" y="25" width="140" height="21" rx="6"/><text class="node-label" x="0" y="40">舉痛論九氣</text><circle class="hit" r="34"/></g>
+        </a>
+      </g>
+
+      <!-- 旅人（GSAP 沿路徑前進） -->
+      <g id="traveler">
+        <circle r="11" fill="#fff3df" opacity="0.5"/>
+        <circle r="6.5" fill="url(#travelerG)" stroke="#fff3df" stroke-width="2"/>
+      </g>
+
+      <!-- 「你在這裡」（旅人抵達後出現） -->
+      <g id="you-here" transform="translate(740,250)">
+        <circle r="30" fill="none" stroke="var(--seal)" stroke-width="2.5" opacity="0.7">
+          <animate attributeName="r" values="26;40;26" dur="2.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.75;0;0.75" dur="2.2s" repeatCount="indefinite"/>
+        </circle>
+        <g transform="translate(0,-54)" filter="url(#soft)">
+          <rect x="-1.5" y="0" width="3" height="42" fill="var(--seal-deep)"/>
+          <path d="M1.5,2 L46,10 L1.5,20 Z" fill="var(--seal)" stroke="var(--seal-deep)" stroke-width="1.5"/>
+          <text x="23" y="15" font-size="11" text-anchor="middle" fill="#fff3df" font-weight="700">你在這裡</text>
+        </g>
+        <circle r="5" fill="var(--seal)" stroke="#fff3df" stroke-width="2"/>
+      </g>
+
+      <!-- 圖例 -->
+      <g class="legend" transform="translate(902,598)">
+        <rect x="0" y="0" width="284" height="204" rx="8" fill="#fbf3dd" stroke="var(--line)" stroke-width="2.5" opacity="0.97" filter="url(#soft)"/>
+        <rect x="6" y="6" width="272" height="192" rx="5" fill="none" stroke="var(--gold)" stroke-width="1" stroke-dasharray="3 4"/>
+        <text x="142" y="32" font-size="16" text-anchor="middle" font-weight="700" fill="var(--ink)">圖　例</text>
+        <circle cx="30" cy="62" r="13" fill="#fbf2d8" stroke="var(--line)" stroke-width="2.5"/><text x="30" y="67" font-size="12" text-anchor="middle">🏠</text>
+        <text x="54" y="66" font-size="13.5" fill="var(--ink)">關卡節點（可點擊看文章）</text>
+        <g transform="translate(30,100)"><rect x="-12" y="-12" width="24" height="24" rx="4" transform="rotate(45)" fill="var(--seal)" stroke="var(--seal-deep)" stroke-width="2"/><text y="4" font-size="12" text-anchor="middle">💀</text></g>
+        <text x="54" y="104" font-size="13.5" fill="var(--ink)">區域魔王（過關難點）</text>
+        <rect x="18" y="126" width="24" height="24" rx="5" fill="var(--jade)" stroke="#1c5246" stroke-width="2"/><text x="30" y="142" font-size="12" text-anchor="middle">⛺</text>
+        <text x="54" y="142" font-size="13.5" fill="var(--ink)">補給站（整補與回顧）</text>
+        <g transform="translate(30,174)"><circle r="5" fill="var(--seal)" stroke="#fff3df" stroke-width="2"/><path d="M3,-22 L30,-17 L3,-9 Z" fill="var(--seal)" stroke="var(--seal-deep)" stroke-width="1"/><rect x="-2" y="-22" width="2.5" height="22" fill="var(--seal-deep)"/></g>
+        <text x="54" y="178" font-size="13.5" fill="var(--ink)">「你在這裡」進度標記</text>
+      </g>
+
+      <!-- 指北針 -->
+      <g class="compass" transform="translate(78,92)" opacity="0.9" filter="url(#soft)">
+        <circle r="36" fill="#fbf3dd" stroke="var(--line)" stroke-width="2.5"/>
+        <circle r="29" fill="none" stroke="var(--gold)" stroke-width="1" stroke-dasharray="2 3"/>
+        <path d="M0,-30 L6,-4 L0,0 L-6,-4 Z" fill="var(--seal)"/>
+        <path d="M0,30 L6,4 L0,0 L-6,4 Z" fill="var(--line)"/>
+        <path d="M30,0 L4,6 L0,0 L4,-6 Z" fill="var(--ink-soft)" opacity="0.6"/>
+        <path d="M-30,0 L-4,6 L0,0 L-4,-6 Z" fill="var(--ink-soft)" opacity="0.6"/>
+        <text y="-16" font-size="11" text-anchor="middle" font-weight="700" fill="var(--seal)">北</text>
+      </g>
+
+      <!-- 朱印（品牌）：左上角、指北針正下方 -->
+      <g class="brand-seal" transform="translate(82,232)" opacity="0.92">
+        <rect x="-38" y="-56" width="76" height="112" rx="6" fill="var(--seal)" stroke="var(--seal-deep)" stroke-width="2.5"/>
+        <rect x="-31" y="-49" width="62" height="98" rx="3" fill="none" stroke="#fbeccb" stroke-width="1.4" opacity="0.85"/>
+        <g fill="#fbeccb" font-weight="700" font-size="22" text-anchor="middle">
+          <text x="13" y="-26">中</text><text x="13" y="2">醫</text><text x="13" y="30">充</text>
+          <text x="-13" y="-12">電</text><text x="-13" y="16">站</text>
+        </g>
+      </g>
+
+      <rect x="0" y="0" width="1200" height="820" fill="url(#vign)" pointer-events="none"/>
+    </svg>
+    <div class="callout" id="callout">
+      <div class="callout-head"><span class="callout-num" id="info-num">11</span><h3 class="callout-title" id="info-title">觀察流動性</h3></div>
+      <p class="callout-blurb" id="info-blurb">診斷的本質，是觀察身體狀態的「流動性」。</p>
+      <a class="callout-read" id="info-read" href="https://franklee529.substack.com/p/11" target="_blank" rel="noopener">📖 讀這篇 →</a>
+    </div>
+  </div>
+
+  <p class="hint">🖱️ <b>點任一關卡</b>＝把「你在這裡」朱旗移到該關（自動記住進度），下方卡片同步顯示簡介與「<b>讀這篇</b>」連結　・　路徑由左下蜿蜒至右上</p>
+
+</div>
+
+<!-- GSAP（CDN，零安裝）：進場動畫＋旅人沿路徑前進 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+<script>
+(function(){
+  var KEY='tcm-newbie-progress', DEFAULT=11;
+  var trail, youHere, steps=[], currentStep=null;
+
+  // 各關一句話簡介（源自作者索引的「核心概念」欄）
+  var BLURBS={
+    1:'寒病要用熱藥、熱病要用寒藥——一切辨證的起點。',
+    2:'一堆溫熱藥組在一起，會「辛甘發散為陽」往外、往上走。',
+    3:'換成一堆苦寒藥，則「酸苦湧瀉為陰」往下、往內收。',
+    4:'寒藥與熱藥並列，其實是讓兩股力量同時作用。',
+    5:'寒熱基礎的階段複習，把前面學的串成一條線。',
+    6:'開始用「寒熱」這把尺，實際去讀懂條文。',
+    7:'多讀處方例，替自己累積臨床的視野與經歷。',
+    8:'把讀到的脈絡，編織成屬於自己的學習寶典。',
+    9:'看診時，實際運用望色與診脈兩種工夫。',
+    10:'離開新手村打怪：學會把病初步分成外感與內傷。',
+    11:'診斷的本質，是觀察身體狀態的「流動性」。',
+    12:'用每天的日課，練習「想自己怎麼想」的後設思考。',
+    13:'拆解中醫究竟是用哪些要素來認識人體。',
+    14:'讀《中藏經》勞傷論提綱，看人體機能如何弱化。',
+    15:'用錯藥之後，身體會走向「寒化」或「熱化」的變證。',
+    16:'第 6–10 關的小複習，鞏固診斷與辨證觀念。',
+    17:'以《舉痛論》九氣，理解情志、寒熱、勞傷如何牽動氣機。'
+  };
+
+  function buildSteps(){
+    steps = Array.prototype.slice.call(document.querySelectorAll('.nodelink')).map(function(a){
+      var g=a.querySelector('.node');
+      var m=/translate\(\s*([-\d.]+)[ ,]+([-\d.]+)/.exec((g&&g.getAttribute('transform'))||'');
+      var numEl=a.querySelector('.node-num');
+      var titleEl=a.querySelector('.node-label');
+      return {el:a, x:m?parseFloat(m[1]):0, y:m?parseFloat(m[2]):0,
+              href:a.getAttribute('href'), num:numEl?parseInt(numEl.textContent,10):0,
+              title:titleEl?titleEl.textContent:''};
+    });
+  }
+  function stepByNum(n){ for(var i=0;i<steps.length;i++) if(steps[i].num===n) return steps[i]; return steps[0]; }
+
+  // 把小方框定位到該站點旁（預設站點下方；貼到框底則翻到上方；左右自動內收）
+  function placeCallout(s){
+    var callout=document.getElementById('callout');
+    var frame=document.querySelector('.map-frame');
+    if(!callout||!frame||!s) return;
+    var node=s.el.querySelector('.node'); if(!node) return;
+    var nr=node.getBoundingClientRect(), fr=frame.getBoundingClientRect();
+    var cx=nr.left+nr.width/2-fr.left, topY=nr.top-fr.top, botY=nr.bottom-fr.top;
+    var cw=callout.offsetWidth, ch=callout.offsetHeight, gap=12;
+    var left=cx-cw/2, top=botY+gap;
+    if(top+ch > fr.height-6){ top=topY-ch-gap; }      // 下方放不下 → 翻到上方
+    if(top<6) top=6;
+    if(left<8) left=8;
+    var maxLeft=fr.width-cw-8; if(left>maxLeft) left=maxLeft;
+    callout.style.left=left+'px'; callout.style.top=top+'px';
+  }
+
+  // 移動「你在這裡」朱旗到第 n 關 + 更新小方框；save=true 時寫入 localStorage
+  function setProgress(n, save){
+    var s=stepByNum(n); if(!s||!youHere) return;
+    currentStep=s;
+    youHere.setAttribute('transform','translate('+s.x+','+s.y+')');
+    var num=document.getElementById('info-num'); if(num) num.textContent=n;
+    var tt=document.getElementById('info-title'); if(tt) tt.textContent=s.title;
+    var bb=document.getElementById('info-blurb'); if(bb) bb.textContent=BLURBS[n]||'';
+    var ir=document.getElementById('info-read'); if(ir) ir.setAttribute('href', s.href);
+    placeCallout(s);
+    if(save){ try{ localStorage.setItem(KEY, String(n)); }catch(e){} }
+  }
+
+  // 互動設定（與 GSAP 無關，無動畫也能用）
+  function setup(){
+    trail=document.getElementById('trail');
+    youHere=document.getElementById('you-here');
+    buildSteps();
+    var saved=DEFAULT;
+    try{ var v=parseInt(localStorage.getItem(KEY),10); if(v>=1&&v<=17) saved=v; }catch(e){}
+    setProgress(saved, false);
+    var callout=document.getElementById('callout');
+    if(callout && !window.gsap){ callout.style.opacity=1; } // 無動畫時直接顯示
+    steps.forEach(function(s){
+      s.el.addEventListener('click', function(e){
+        e.preventDefault();              // 不導頁，改成移動標記＋方框
+        setProgress(s.num, true);
+        if(window.gsap){ gsap.fromTo('#callout',{opacity:.45},{opacity:1,duration:.3,ease:'power2.out'}); }
+      });
+    });
+    // 視窗縮放時重新定位方框
+    window.addEventListener('resize', function(){ if(currentStep) placeCallout(currentStep); });
+    return saved;
+  }
+
+  // 進場動畫（GSAP）：路徑描繪 → 節點淡入 → 旅人走到目前進度 → 插旗
+  function intro(saved){
+    try{
+      gsap.registerPlugin(MotionPathPlugin);
+      var total=trail.getTotalLength();
+      function progressFor(px,py){var best=0,bd=1e12,N=500;for(var i=0;i<=N;i++){var l=total*i/N,p=trail.getPointAtLength(l);var d=(p.x-px)*(p.x-px)+(p.y-py)*(p.y-py);if(d<bd){bd=d;best=l;}}return best/total;}
+      var s=stepByNum(saved), hereProg=progressFor(s.x,s.y);
+
+      gsap.set(['.region-wash','.deco-layer','.boss-flag','.supply','.legend','.compass','.brand-seal'],{autoAlpha:0});
+      gsap.set('.node',{autoAlpha:0});
+      gsap.set(['#trail-dots','#traveler','#you-here','#callout'],{autoAlpha:0});
+      gsap.set(trail,{strokeDasharray:total,strokeDashoffset:total});
+
+      gsap.timeline({defaults:{ease:'power2.out'}})
+        .to('.region-wash',{autoAlpha:1,duration:.9,stagger:.08},0)
+        .to('.deco-layer',{autoAlpha:1,duration:1.0},'<.15')
+        .to(trail,{strokeDashoffset:0,duration:2.0,ease:'power1.inOut'},.4)
+        .to('#trail-dots',{autoAlpha:1,duration:.8},'-=0.7')
+        .to('.node',{autoAlpha:1,duration:.5,stagger:.055},'-=1.95')
+        .to('.boss-flag',{autoAlpha:1,duration:.5,stagger:.16},'-=0.7')
+        .to('.supply',{autoAlpha:1,duration:.4},'<')
+        .set('#traveler',{autoAlpha:1},'-=0.1')
+        .to('#traveler',{duration:2.4,ease:'power1.inOut',motionPath:{path:'#trail',align:'#trail',alignOrigin:[.5,.5],start:0,end:hereProg}},'<')
+        .to('#traveler',{autoAlpha:0,duration:.4},'-=0.15')
+        .to('#you-here',{autoAlpha:1,duration:.55,ease:'back.out(2)'},'-=0.35')
+        .to('#callout',{autoAlpha:1,duration:.45},'-=0.2')
+        .to(['.legend','.compass','.brand-seal'],{autoAlpha:1,duration:.6,stagger:.12},'-=1.8');
+    }catch(e){
+      try{ gsap.set(['.region-wash','.deco-layer','.boss-flag','.supply','.legend','.compass','.brand-seal','.node','#trail-dots','#you-here','#callout'],{autoAlpha:1}); if(trail) trail.style.strokeDashoffset=0; }catch(_){}
+    }
+  }
+
+  window.addEventListener('load', function(){
+    var saved=setup();          // 互動永遠啟用
+    if(window.gsap) intro(saved); // 有 GSAP 才跑進場動畫
+  });
+})();
+</script>
+</body>
+</html>
