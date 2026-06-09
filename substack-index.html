@@ -474,6 +474,12 @@
       font-size: 13px;
     }
 
+    .visit-counter {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     @media (max-width: 760px) {
       h1,
       .hero-desc,
@@ -624,6 +630,7 @@
 
   <footer>
     中醫充電站文章地圖 · 資料來源：本地 INDEX xlsx · 可直接部署於 GitHub Pages
+    <div class="visit-counter" id="visitCounter" aria-live="polite"></div>
   </footer>
 
   <script>
@@ -965,5 +972,44 @@
   </script>
   <script data-goatcounter="https://zaralcy.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
+  <script>
+    (function () {
+      const counter = document.querySelector("#visitCounter");
+      if (!counter) return;
+
+      function displayCount() {
+        const path = window.goatcounter && window.goatcounter.get_data
+          ? window.goatcounter.get_data().p
+          : window.location.pathname;
+        const url = "https://zaralcy.goatcounter.com/counter/" + encodeURIComponent(path) + ".json";
+
+        fetch(url)
+          .then(response => {
+            if (!response.ok) throw new Error("Counter unavailable");
+            return response.json();
+          })
+          .then(data => {
+            if (data && data.count) {
+              counter.textContent = "本頁已累積 " + data.count + " 次造訪";
+            }
+          })
+          .catch(() => {
+            counter.textContent = "";
+          });
+      }
+
+      const timer = setInterval(() => {
+        if (window.goatcounter && window.goatcounter.get_data) {
+          clearInterval(timer);
+          displayCount();
+        }
+      }, 120);
+
+      setTimeout(() => {
+        clearInterval(timer);
+        displayCount();
+      }, 2400);
+    })();
+  </script>
 </body>
 </html>
