@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>中醫充電站｜文章地圖</title>
+  <meta name="description" content="中醫充電站 Substack 文章索引。從週記、方劑、經典閱讀、醫案辨證到 AI 協作學習，找到下一篇值得讀的文章。">
+  <style>
+    :root {
+      --ink: #25211d;
+      --muted: #6e665f;
+      --line: #d9d2c8;
+      --paper: #fbfaf7;
+      --surface: #ffffff;
+      --wash: #f1ede6;
+      --rust: #a44f31;
+      --teal: #2f756f;
+      --olive: #717a33;
+      --blue: #466b91;
+      --shadow: 0 18px 45px rgba(55, 43, 30, .12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(241, 237, 230, .66), rgba(251, 250, 247, 0) 360px),
+        var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.7;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(37, 33, 29, .12);
+      background: rgba(251, 250, 247, .92);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand { min-width: 0; }
+    .brand strong { display: block; font-size: 16px; line-height: 1.3; }
+    .brand span { color: var(--muted); font-size: 13px; }
+
+    .topnav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .topnav a {
+      padding: 6px 10px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+    }
+
+    .topnav a:hover {
+      color: var(--ink);
+      border-color: var(--line);
+      background: var(--surface);
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    .hero {
+      padding: 64px 0 40px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 34px;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--rust);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 820px;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.06;
+      font-weight: 850;
+      overflow-wrap: anywhere;
+    }
+
+    .hero-desc {
+      max-width: 760px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .hero-tools {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      margin-top: 28px;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 0;
+    }
+
+    .search-box input {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      padding: 11px 15px;
+      outline: none;
+      box-shadow: 0 10px 24px rgba(55, 43, 30, .05);
+    }
+
+    .search-box input:focus {
+      border-color: rgba(164, 79, 49, .55);
+      box-shadow: 0 0 0 4px rgba(164, 79, 49, .1);
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .stat {
+      min-width: 96px;
+      border-top: 2px solid var(--line);
+      padding-top: 8px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .block {
+      margin: 42px 0 0;
+    }
+
+    .block-header {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      padding-bottom: 13px;
+      margin-bottom: 18px;
+      border-bottom: 2px solid var(--line);
+    }
+
+    .block-num {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .block-title {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.25;
+    }
+
+    .block-subtitle {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--ink);
+      padding: 7px 13px;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease;
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(164, 79, 49, .45);
+      background: #fff7f1;
+    }
+
+    .filter-btn.active {
+      border-color: var(--rust);
+      background: var(--rust);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .route-card {
+      width: 100%;
+      min-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 20px;
+      cursor: pointer;
+      color: var(--ink);
+      text-align: left;
+      white-space: normal;
+      transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+    }
+
+    .route-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(47, 117, 111, .4);
+      box-shadow: var(--shadow);
+    }
+
+    .route-card b {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .route-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .route-card span {
+      display: inline-block;
+      margin-top: 14px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .result-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .clear-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .clear-btn:hover {
+      color: var(--ink);
+      background: var(--surface);
+    }
+
+    .article-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .article-card {
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--blue);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 20px 21px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      min-height: 100%;
+      transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+    }
+
+    .article-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .article-card[data-category="方劑藥物"] { border-top-color: var(--rust); }
+    .article-card[data-category="經典閱讀"] { border-top-color: var(--teal); }
+    .article-card[data-category="醫案辨證"] { border-top-color: var(--olive); }
+    .article-card[data-category="學習方法"] { border-top-color: var(--blue); }
+    .article-card[data-category="週記日課"] { border-top-color: var(--muted); }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .serial {
+      flex: 0 0 auto;
+      border-radius: 6px;
+      background: var(--wash);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      padding: 4px 9px;
+    }
+
+    .category {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .article-card h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .summary {
+      flex: 1;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      background: var(--wash);
+      color: var(--ink);
+      font-size: 12px;
+      padding: 3px 9px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 13px;
+      margin-top: auto;
+    }
+
+    .week {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .read-btn {
+      border-radius: 999px;
+      background: var(--rust);
+      color: #fff;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .empty {
+      display: none;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, .5);
+    }
+
+    .thread {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+      gap: 8px;
+    }
+
+    .thread a {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 9px 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .thread a:hover {
+      border-color: rgba(164, 79, 49, .5);
+      background: #fff7f1;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 24px 20px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 760px) {
+      h1,
+      .hero-desc,
+      .route-card b,
+      .route-card p,
+      .article-card h3,
+      .summary {
+        word-break: break-all;
+        line-break: anywhere;
+      }
+
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .topnav {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      main { padding: 0 14px 56px; }
+      .hero { padding-top: 38px; }
+      h1 {
+        font-size: 30px;
+        line-height: 1.18;
+      }
+
+      .hero-desc {
+        font-size: 16px;
+      }
+
+      .hero-tools { grid-template-columns: 1fr; }
+      .stats { justify-content: flex-start; }
+      .route-card,
+      .article-card {
+        min-width: 0;
+      }
+
+      .route-card {
+        padding: 18px 20px;
+      }
+
+      .route-card p {
+        font-size: 13px;
+        line-height: 1.8;
+      }
+
+      .route-card * {
+        white-space: normal;
+      }
+
+      .block-header { display: block; }
+      .block-title { margin-top: 5px; }
+      .block-subtitle { display: block; margin: 6px 0 0; }
+      .article-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#">
+        <strong>中醫充電站</strong>
+        <span>Substack 文章地圖</span>
+      </a>
+      <nav class="topnav" aria-label="頁面導覽">
+        <a href="#routes">閱讀路線</a>
+        <a href="#articles">文章索引</a>
+        <a href="#quick">快速跳轉</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Frank Lee's TCM Learning Journal · Index</p>
+      <h1>把每週中醫筆記，整理成可以走的學習地圖</h1>
+      <p class="hero-desc">
+        這裡收集「中醫學習週記」與「中醫充電站」文章。你可以依主題搜尋方劑、經典、醫案與學習方法，也可以從推薦路線開始，慢慢找到自己現在卡住的那一格。
+      </p>
+      <div class="hero-tools">
+        <label class="search-box" for="searchInput">
+          <input id="searchInput" type="search" placeholder="搜尋：補中益氣湯、傷寒論、醫案、AI、溫熱論..." autocomplete="off">
+        </label>
+        <div class="stats" aria-label="文章統計">
+          <div class="stat"><b id="totalCount">25</b><span>篇文章</span></div>
+          <div class="stat"><b>5</b><span>主題入口</span></div>
+          <div class="stat"><b>4</b><span>推薦路線</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="routes">
+      <div class="block-header">
+        <span class="block-num">Routes</span>
+        <h2 class="block-title">推薦閱讀路線</h2>
+        <span class="block-subtitle">先選一條路，再慢慢讀文章</span>
+      </div>
+      <div class="route-grid">
+        <button class="route-card" type="button" data-route="學習方法">
+          <b>新手與日課路線</b>
+          <p>從週記、筆記法、每天三則中醫筆記開始，先建立能持續讀下去的節奏。</p>
+          <span>篩選學習方法</span>
+        </button>
+        <button class="route-card" type="button" data-route="方劑藥物">
+          <b>方劑與藥物路線</b>
+          <p>從龍膽瀉肝湯、補中益氣湯到經方製法，讀懂方義與藥物分工。</p>
+          <span>篩選方劑藥物</span>
+        </button>
+        <button class="route-card" type="button" data-route="經典閱讀">
+          <b>經典閱讀路線</b>
+          <p>沿著《傷寒論》《內外傷辨惑論》《經方例釋》《溫熱論》進入原典脈絡。</p>
+          <span>篩選經典閱讀</span>
+        </button>
+        <button class="route-card" type="button" data-route="醫案辨證">
+          <b>醫案與臨床思考路線</b>
+          <p>從痹證、痿證、積聚、脈診與望診，練習把條文轉成辨證判斷。</p>
+          <span>篩選醫案辨證</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="block" id="articles">
+      <div class="block-header">
+        <span class="block-num">Index</span>
+        <h2 class="block-title">文章索引</h2>
+        <span class="block-subtitle">依主題或關鍵字點閱</span>
+      </div>
+      <div class="filters" id="filters" aria-label="主題篩選"></div>
+      <div class="result-line">
+        <span id="resultText">顯示全部文章</span>
+        <button class="clear-btn" type="button" id="clearBtn">清除篩選</button>
+      </div>
+      <div class="article-grid" id="articleGrid"></div>
+      <p class="empty" id="emptyState">目前沒有符合的文章。可以換一個關鍵字，例如「方劑」「醫案」「筆記」「傷寒」。</p>
+    </section>
+
+    <section class="block" id="quick">
+      <div class="block-header">
+        <span class="block-num">Quick Jump</span>
+        <h2 class="block-title">期數快速跳轉</h2>
+        <span class="block-subtitle">熟讀者可以直接找序列</span>
+      </div>
+      <div class="thread" id="thread"></div>
+    </section>
+  </main>
+
+  <footer>
+    中醫充電站文章地圖 · 資料來源：本地 INDEX xlsx · 可直接部署於 GitHub Pages
+  </footer>
+
+  <script>
+    const articles = [
+      {
+        id: 1,
+        title: "Frank Lee's中醫學習週誌2025W23",
+        url: "https://franklee529.substack.com/p/frank-lees2025w23",
+        summary: "作為 Substack 週誌形式的開端，說明以 Notes 保存中醫日課與每週文章索引，並整理東垣黃疸、腎中火邪牙痛與三消症等閱讀筆記。",
+        category: "週記日課",
+        tags: ["黃疸", "東垣", "牙痛", "三消症"],
+        week: "2025 W23"
+      },
+      {
+        id: 2,
+        title: "Frank Lee's中醫學習週誌2025W24",
+        url: "https://franklee529.substack.com/p/frank-lees2025w24",
+        summary: "延續每週中醫學習筆記索引，回顧《古今醫案按》疸病醫案、寒濕與穀疸傳變，並補充跟診病例卡片盒與皮膚津閉思路。",
+        category: "醫案辨證",
+        tags: ["古今醫案按", "疸病", "寒濕", "卡片盒"],
+        week: "2025 W24"
+      },
+      {
+        id: 3,
+        title: "Frank Lee's中醫學習週誌2025-W25",
+        url: "https://franklee529.substack.com/p/frank-lees2025-w25",
+        summary: "以「每天微小前進」談中醫臨床底蘊，整理酒傷發黃、身癢、肝火瘙癢、青皮、抑肝散與肝膽情緒條文等閱讀筆記。",
+        category: "週記日課",
+        tags: ["酒傷發黃", "身癢", "抑肝散", "青皮"],
+        week: "2025 W25"
+      },
+      {
+        id: 4,
+        title: "Frank Lee's中醫學習週誌2025-W26",
+        url: "https://franklee529.substack.com/p/frank-lees2025-w26",
+        summary: "從開業時間感與回看舊筆記談中醫學習反思，整理番茄鐘、筆記法、建中理中補中差異、麻木痹證與地黃丸等方藥醫案。",
+        category: "學習方法",
+        tags: ["番茄鐘", "筆記法", "建中湯", "地黃丸"],
+        week: "2025 W26"
+      },
+      {
+        id: 5,
+        title: "龍膽瀉肝湯的出典與閱讀註記",
+        url: "https://franklee529.substack.com/p/f26",
+        summary: "考察龍膽瀉肝湯在《蘭室秘藏》的出典，從前陰臊臭、酒濕熱與下焦治法分析病機、針藥思路與方義，並對照現行《刪補名醫方論》組成。",
+        category: "方劑藥物",
+        tags: ["龍膽瀉肝湯", "蘭室秘藏", "下焦濕熱", "方義"],
+        week: "專題"
+      },
+      {
+        id: 6,
+        title: "Frank Lee's中醫學習週誌2025-W27",
+        url: "https://franklee529.substack.com/p/frank-lees2025-w27",
+        summary: "以夏至到小暑的暑氣觀察開場，整理中暍中暑、白虎人參湯與五苓散思路，並索引痰、痹、濕熱、血虛熱痹與結構性剝奪等筆記。",
+        category: "經典閱讀",
+        tags: ["中暑", "白虎人參湯", "五苓散", "濕熱"],
+        week: "2025 W27"
+      },
+      {
+        id: 7,
+        title: "中醫充電站第1期2025W28",
+        url: "https://franklee529.substack.com/p/12025w28",
+        summary: "以「中醫充電站」週回顧形式開場，整理《醫理真傳》、傷寒論備課筆記與《古今醫案按》的閱讀收穫，並嘗試用卡片盒筆記與 AI 協作提升中醫學習整理。",
+        category: "學習方法",
+        tags: ["醫理真傳", "傷寒論", "卡片盒", "AI協作"],
+        week: "2025 W28"
+      },
+      {
+        id: 8,
+        title: "中醫充電站第2期2025W29",
+        url: "https://franklee529.substack.com/p/22025w29",
+        summary: "從「1天1行小日記」談小量記錄與週回顧方法，延伸到中醫筆記、閱讀進度管理、AI 圖解條文，以及多則疼痛醫案中的病機與處方判斷。",
+        category: "學習方法",
+        tags: ["小日記", "週回顧", "AI圖解", "疼痛醫案"],
+        week: "2025 W29"
+      },
+      {
+        id: 9,
+        title: "中醫充電站第3期2025W30",
+        url: "https://franklee529.substack.com/p/32025w30?utm_source=publication-search",
+        summary: "從冥想習慣談到中醫日課，強調以小量、穩定、持續的閱讀累積辨證理解與臨床觀察力。",
+        category: "週記日課",
+        tags: ["冥想", "日課", "辨證", "臨床觀察"],
+        week: "2025 W30"
+      },
+      {
+        id: 10,
+        title: "中醫充電站第4期2025W31",
+        url: "https://franklee529.substack.com/p/42025w31",
+        summary: "從《類比之山》的經驗地圖談教學與分享，回顧《古今醫案按》痹證醫案，整理仙茅、二陳湯加減與寒濕筋縮等閱讀筆記，強調以「為什麼」活化臨床思考。",
+        category: "醫案辨證",
+        tags: ["類比之山", "痹證", "二陳湯", "寒濕"],
+        week: "2025 W31"
+      },
+      {
+        id: 11,
+        title: "中醫充電站第5期2025W32",
+        url: "https://franklee529.substack.com/p/52025w32",
+        summary: "從日課最低門檻與 AI 臨床提示語談學習維持，回顧《臨證指南醫案》、劉渡舟腹水經驗與滋腎丸驗案，並以鄭欽安書摘辨析虛寒與陽極似陰。",
+        category: "醫案辨證",
+        tags: ["臨證指南醫案", "劉渡舟", "滋腎丸", "鄭欽安"],
+        week: "2025 W32"
+      },
+      {
+        id: 12,
+        title: "中醫充電站第6期2025W33-真藏脈的出典",
+        url: "https://franklee529.substack.com/p/62025w33",
+        summary: "以週回顧和「帶著問題讀經典」為主軸，整理《內經》真藏脈與胃氣的出典，並補充《傷寒論》結證表格、痿症驗案與文獻研究的學習感。",
+        category: "經典閱讀",
+        tags: ["內經", "真藏脈", "胃氣", "傷寒論"],
+        week: "2025 W33"
+      },
+      {
+        id: 13,
+        title: "中醫充電站第7期2025W34-第一天上診",
+        url: "https://franklee529.substack.com/p/72025w34",
+        summary: "從李聰甫談中醫學習基本功與第一天上診經驗出發，串連望診「有神無神」、汗下法判斷與《傷寒論》詮解方法，強調臨床觀察與反思紀錄。",
+        category: "醫案辨證",
+        tags: ["上診", "望診", "汗下法", "臨床反思"],
+        week: "2025 W34"
+      },
+      {
+        id: 14,
+        title: "中醫充電站第8期2025W35-處暑過後與積聚書摘",
+        url: "https://franklee529.substack.com/p/82025w35",
+        summary: "以處暑後的節氣觀察為切入，測試 AI 對臨床季節提示的回應，並整理「積」的病因、治法、平胃散與理中湯等積聚方義及鄭欽安相關論述。",
+        category: "方劑藥物",
+        tags: ["處暑", "積聚", "平胃散", "理中湯"],
+        week: "2025 W35"
+      },
+      {
+        id: 15,
+        title: "中醫充電站第9期2025W36-痿證的病案閱讀",
+        url: "https://franklee529.substack.com/p/92025w36",
+        summary: "從筆記收納與閱讀分散投資談每週學習整理，並閱讀《古今醫案按》痿證三案，對照脈痿、營衛交虛與肝腎陰虛火盛的辨證差異。",
+        category: "醫案辨證",
+        tags: ["痿證", "古今醫案按", "營衛", "肝腎陰虛"],
+        week: "2025 W36"
+      },
+      {
+        id: 16,
+        title: "中醫充電站第10期2025W37-春夏養陽，秋冬養陰",
+        url: "https://franklee529.substack.com/p/102025w37",
+        summary: "由白露節氣與一日四時談春夏養陽、秋冬養陰，回顧多則《古今醫案按》驗案，包含脾虛下陷、蛇瘕、眼衄與鴨肉成瘕，並反思脈診學習。",
+        category: "經典閱讀",
+        tags: ["春夏養陽", "白露", "古今醫案按", "脈診"],
+        week: "2025 W37"
+      },
+      {
+        id: 17,
+        title: "中醫充電站第11期2025W38-七日來復",
+        url: "https://franklee529.substack.com/p/112025w38",
+        summary: "從《周易懸象》與《傷寒論》的「七日」觀察病程，整理積病醫案、驚嚇致病與小腸部辨證方藥，並示範以語言模型輔助古案分析。",
+        category: "經典閱讀",
+        tags: ["周易", "傷寒論", "七日", "古案分析"],
+        week: "2025 W38"
+      },
+      {
+        id: 18,
+        title: "中醫充電站第12期2025W39-可汗不可汗",
+        url: "https://franklee529.substack.com/p/122025w39",
+        summary: "以秋分後「可汗不可汗」為主題，整理《傷寒論》發汗禁忌與傷津脈絡，回顧承氣湯、芍藥甘草湯、小陷胸湯等醫案配伍推理。",
+        category: "經典閱讀",
+        tags: ["傷寒論", "發汗禁忌", "承氣湯", "芍藥甘草湯"],
+        week: "2025 W39"
+      },
+      {
+        id: 19,
+        title: "中醫充電站第13期-飲食勞倦論",
+        url: "https://franklee529.substack.com/p/13",
+        summary: "開始閱讀《內外傷辨惑論》中的補中益氣湯原典，聚焦飲食勞倦、脾胃氣虛、陰火上乘與內傷外感鑑別，並附醫案說明甘溫補中思路。",
+        category: "方劑藥物",
+        tags: ["補中益氣湯", "內外傷辨惑論", "飲食勞倦", "陰火"],
+        week: "第13期"
+      },
+      {
+        id: 20,
+        title: "中醫充電站第14期-補中益氣湯立方本指",
+        url: "https://franklee529.substack.com/p/14",
+        summary: "延續補中益氣湯原典，整理立方本指與黃耆、人參、炙甘草、升麻、柴胡等藥物分工，並補充硃砂安神丸與陽虛乾咳醫案。",
+        category: "方劑藥物",
+        tags: ["補中益氣湯", "黃耆", "升麻", "柴胡"],
+        week: "第14期"
+      },
+      {
+        id: 21,
+        title: "中醫充電站第15期-補中益氣湯-刪補名醫方論",
+        url: "https://franklee529.substack.com/p/15",
+        summary: "閱讀《刪補名醫方論》中的補中益氣湯集註，整理陰虛內熱、氣虛下陷、清陽不升與方中八味藥的作用，並加入閱讀小測驗輔助理解。",
+        category: "方劑藥物",
+        tags: ["補中益氣湯", "刪補名醫方論", "氣虛下陷", "小測驗"],
+        week: "第15期"
+      },
+      {
+        id: 22,
+        title: "中醫充電站第16期-《經方例釋》連載1",
+        url: "https://franklee529.substack.com/p/16-1",
+        summary: "開啟《經方例釋》連載，整理經方用名例與服、含、灌、導、摩、熨、熏、洗、噀、粉等給藥方式，並以泡腳與外洗札記延伸臨床運用。",
+        category: "經典閱讀",
+        tags: ["經方例釋", "給藥方式", "泡腳", "外洗"],
+        week: "第16期"
+      },
+      {
+        id: 23,
+        title: "中醫充電站第17期-《經方例釋》連載2-經方製法例",
+        url: "https://franklee529.substack.com/p/17-2",
+        summary: "延續《經方例釋》連載，整理湯、煎、散、丸等製法與病位深淺的對應，並從積聚脈象與《靈樞》望色判斷延伸到處方形態思考。",
+        category: "經典閱讀",
+        tags: ["經方例釋", "製法", "靈樞", "望色"],
+        week: "第17期"
+      },
+      {
+        id: 24,
+        title: "中醫學習週記2026W22-每天三則中醫筆記",
+        url: "https://franklee529.substack.com/p/2026w22",
+        summary: "重啟每天三則中醫筆記的日課，說明以 25 分鐘閱讀留下條文、心得與圖解素材，並從《溫熱論》《第五項修練》與中醫學習位階圖反思探索式學習。",
+        category: "學習方法",
+        tags: ["每天三則", "溫熱論", "第五項修練", "探索式學習"],
+        week: "2026 W22"
+      },
+      {
+        id: 25,
+        title: "中醫學習週記2026W23-持續讀書有如持續買進",
+        url: "https://franklee529.substack.com/p/2026w23",
+        summary: "以「持續讀書如持續買進」談中醫日課投資，整理《溫熱論》通陽、梔子豉湯宣透胸膈鬱熱與半夏厚朴湯加減，並延伸到形體結構與數位古籍工具。",
+        category: "學習方法",
+        tags: ["持續讀書", "溫熱論", "梔子豉湯", "半夏厚朴湯"],
+        week: "2026 W23"
+      }
+    ];
+
+    const categories = ["全部", "週記日課", "學習方法", "方劑藥物", "經典閱讀", "醫案辨證"];
+    const state = { category: "全部", query: "" };
+
+    const filters = document.querySelector("#filters");
+    const grid = document.querySelector("#articleGrid");
+    const thread = document.querySelector("#thread");
+    const searchInput = document.querySelector("#searchInput");
+    const resultText = document.querySelector("#resultText");
+    const emptyState = document.querySelector("#emptyState");
+    const clearBtn = document.querySelector("#clearBtn");
+    document.querySelector("#totalCount").textContent = articles.length;
+
+    function normalize(text) {
+      return String(text || "").toLowerCase().trim();
+    }
+
+    function articleText(article) {
+      return normalize([
+        article.title,
+        article.summary,
+        article.category,
+        article.week,
+        article.tags.join(" ")
+      ].join(" "));
+    }
+
+    function matches(article) {
+      const byCategory = state.category === "全部" || article.category === state.category;
+      const byQuery = !state.query || articleText(article).includes(normalize(state.query));
+      return byCategory && byQuery;
+    }
+
+    function renderFilters() {
+      filters.innerHTML = categories.map(category => `
+        <button class="filter-btn${category === state.category ? " active" : ""}" type="button" data-category="${category}">
+          ${category}
+        </button>
+      `).join("");
+    }
+
+    function renderArticles() {
+      const visible = articles.filter(matches);
+      resultText.textContent = visible.length === articles.length
+        ? "顯示全部文章"
+        : `顯示 ${visible.length} / ${articles.length} 篇文章`;
+      emptyState.style.display = visible.length ? "none" : "block";
+      grid.innerHTML = visible.map(article => `
+        <article class="article-card" id="article-${article.id}" data-category="${article.category}">
+          <div class="card-top">
+            <span class="serial">${String(article.id).padStart(2, "0")}</span>
+            <span class="category">${article.category}</span>
+          </div>
+          <h3>${article.title}</h3>
+          <p class="summary">${article.summary}</p>
+          <div class="tags">
+            ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+          </div>
+          <div class="card-footer">
+            <span class="week">${article.week}</span>
+            <a class="read-btn" href="${article.url}" target="_blank" rel="noopener noreferrer">閱讀原文</a>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderThread() {
+      thread.innerHTML = articles.map(article => `
+        <a href="#article-${article.id}" title="${article.title}">${String(article.id).padStart(2, "0")}</a>
+      `).join("");
+    }
+
+    function update() {
+      renderFilters();
+      renderArticles();
+    }
+
+    filters.addEventListener("click", event => {
+      const button = event.target.closest("[data-category]");
+      if (!button) return;
+      state.category = button.dataset.category;
+      update();
+    });
+
+    document.querySelectorAll("[data-route]").forEach(button => {
+      button.addEventListener("click", () => {
+        state.category = button.dataset.route;
+        state.query = "";
+        searchInput.value = "";
+        update();
+        document.querySelector("#articles").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    searchInput.addEventListener("input", event => {
+      state.query = event.target.value;
+      renderArticles();
+    });
+
+    clearBtn.addEventListener("click", () => {
+      state.category = "全部";
+      state.query = "";
+      searchInput.value = "";
+      update();
+    });
+
+    renderThread();
+    update();
+  </script>
+</body>
+</html>
