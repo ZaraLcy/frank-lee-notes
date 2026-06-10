@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>中風篇・圖文筆記｜古今醫案按</title>
+  <style>
+    /* ── 設計系統（鎖定，不重改） ─────────────────────────────────────── */
+    :root {
+      --ink: #25211d; --muted: #6e665f; --line: #d9d2c8; --paper: #fbfaf7;
+      --surface: #ffffff; --wash: #f1ede6; --rust: #a44f31; --teal: #2f756f;
+      --olive: #717a33; --blue: #466b91;
+      --shadow: 0 18px 45px rgba(55,43,30,.12); --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC",
+        "Microsoft JhengHei", sans-serif; line-height: 1.7; }
+    a { color: inherit; text-decoration: none; }
+
+    /* topbar */
+    .topbar { position: sticky; top: 0; z-index: 20;
+      border-bottom: 1px solid rgba(37,33,29,.12);
+      background: rgba(251,250,247,.92); backdrop-filter: blur(16px); }
+    .topbar-inner { max-width: 1380px; margin: 0 auto; padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+    .brand strong { font-size: 16px; white-space: nowrap; }
+    .brand span { color: var(--muted); font-size: 13px; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; }
+    .nav { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .nav a, .chapter button {
+      border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+      border-radius: 999px; padding: 7px 14px; font: inherit; font-size: 13px;
+      line-height: 1; text-decoration: none; cursor: pointer;
+      transition: transform .15s, border-color .15s, background .15s; }
+    .nav a:hover, .chapter button:hover { transform: translateY(-1px);
+      border-color: rgba(164,79,49,.45); background: #fff7f1; }
+
+    /* main layout */
+    main { max-width: 1380px; margin: 0 auto; padding: 24px 24px 64px; }
+
+    /* hero */
+    .hero { padding: 72px 0 56px; margin-bottom: 32px; }
+    .eyebrow { margin: 0 0 18px; color: var(--rust); font-size: 13px;
+      font-weight: 700; letter-spacing: .06em; }
+    h1 { margin: 0; font-size: clamp(36px,5vw,72px); line-height: 1.05; font-weight: 800; }
+    .hero-sub { max-width: 720px; margin: 18px 0 0; color: var(--muted); font-size: 18px; }
+    .summary-strip { margin-top: 28px; display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+    .summary-item { border-top: 2px solid var(--line); padding-top: 12px; }
+    .summary-item b { display: block; font-size: 14px; margin-bottom: 4px; }
+    .summary-item span { display: block; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    /* three-column layout */
+    .layout { display: grid;
+      grid-template-columns: 220px minmax(0,1fr) 320px;
+      grid-template-areas: "timeline content yuanwen";
+      gap: 24px; align-items: start; }
+
+    /* timeline */
+    .timeline { grid-area: timeline; position: sticky; top: 68px;
+      max-height: calc(100vh - 88px); overflow-y: auto; padding: 12px;
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); }
+    .timeline > h2 { margin: 0 0 8px; font-size: 14px; padding: 4px 6px 10px;
+      border-bottom: 1px solid var(--line); }
+    .chapter { width: 100%; border: none; text-align: left; padding: 0; background: none; }
+    .chapter button { width: 100%; border: 1px solid transparent; border-radius: var(--radius);
+      padding: 9px 10px; text-align: left; line-height: 1.35; background: transparent; cursor: pointer;
+      transition: background .15s, border-color .15s; }
+    .chapter button.active { border-color: rgba(47,117,111,.45); background: #eef8f5; }
+    .chapter time { display: block; color: var(--teal); font-size: 11px;
+      font-weight: 700; margin-bottom: 3px; letter-spacing: .04em; }
+    .chapter span { display: block; font-weight: 700; font-size: 12.5px; }
+    .chapter.dim button { opacity: .45; cursor: default; }
+    .chapter.dim button:hover { transform: none; background: transparent;
+      border-color: transparent; }
+    .chapter-sep { font-size: 11px; color: var(--muted); padding: 10px 10px 4px;
+      font-weight: 700; letter-spacing: .06em; }
+
+    /* 原文對照 panel */
+    .yuanwen-panel { grid-area: yuanwen; position: sticky; top: 68px;
+      max-height: calc(100vh - 88px); overflow: hidden; display: flex; flex-direction: column;
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); box-shadow: var(--shadow); }
+    .yw-header { padding: 12px 16px; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .yw-header-badge { width: 22px; height: 22px; border-radius: 999px;
+      background: var(--rust); color: #fff; font-size: 12px; font-weight: 800;
+      display: inline-grid; place-content: center; flex-shrink: 0; }
+    .yw-header-title { font-size: 13px; font-weight: 700; color: var(--muted); }
+    .yw-body { overflow-y: auto; padding: 16px; flex: 1; }
+    .yw-block { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+    .yw-block:last-child { border-bottom: none; margin-bottom: 0; }
+    .yw-tag { font-size: 11px; font-weight: 700; color: var(--rust); letter-spacing: .06em;
+      margin-bottom: 8px; font-family: sans-serif; }
+    .yw-text { font-size: 13px; line-height: 2.1; color: #3a3530;
+      font-family: "Noto Serif TC", "Songti TC", Georgia, serif; }
+    .yw-block.active .yw-text { background: #fff7f1; padding: 10px 12px;
+      border-radius: var(--radius); margin: -2px -4px; }
+
+    /* content */
+    .content { grid-area: content; display: grid; gap: 24px; min-width: 0; }
+    .section { padding: 28px; background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); scroll-margin-top: 88px; }
+    .section > h2 { margin: 0 0 8px; font-size: 27px; line-height: 1.2; }
+    .section-meta { font-size: 13px; color: var(--muted); margin: 0 0 20px; }
+    .section > h3 { font-size: 18px; margin: 24px 0 10px; }
+    .section p { margin: 0 0 14px; }
+    .lead { color: var(--muted); font-size: 17px; line-height: 1.65; }
+
+    /* original text quote (inside section) */
+    .yw-quote { background: var(--wash); border-left: 3px solid var(--rust);
+      padding: 14px 18px; margin: 0 0 18px; border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 14px; line-height: 2.1; color: #3a3530;
+      font-family: "Noto Serif TC", "Songti TC", Georgia, serif; }
+    .yw-quote cite { display: block; margin-top: 8px; font-size: 12px; color: var(--muted);
+      font-style: normal; font-family: sans-serif; }
+
+    /* 按語 block */
+    .anyu-block { background: #eef8f5; border-left: 3px solid var(--teal);
+      padding: 14px 18px; margin: 18px 0; border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 14px; line-height: 1.85; }
+    .anyu-label { font-size: 11px; font-weight: 700; color: var(--teal);
+      letter-spacing: .06em; margin-bottom: 6px; font-family: sans-serif; }
+
+    /* components */
+    .note-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+    .note-grid > .figure.slide { order: -1; }
+    .figure { border: 1px solid var(--line); border-radius: var(--radius);
+      overflow: hidden; background: #fff; }
+    .figure.slide { box-shadow: 0 12px 32px rgba(55,43,30,.09); }
+    .figure.slide svg { width: 100%; display: block; aspect-ratio: 1200/760; }
+    .figure figcaption { padding: 10px 14px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .line-tag { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px;
+      padding: 6px 14px 6px 6px; border-radius: 999px; background: #fff7f1;
+      border: 1px solid var(--line); font-weight: 800; font-size: 14px; }
+    .line-tag i { display: inline-grid; place-content: center; width: 26px; height: 26px;
+      border-radius: 999px; background: var(--rust); color: #fff; font-style: normal; font-size: 14px; }
+    .quote-zh { margin: 0 0 16px; color: var(--teal); font-size: 17px; font-weight: 700; }
+    .keyline { margin: 20px 0 0; padding: 14px 18px; border-left: 4px solid var(--rust);
+      background: #fff7f1; color: #4a2b20; font-size: 15px; border-radius: 0 var(--radius) var(--radius) 0; }
+    .arrow { display: grid; grid-template-columns: 1fr 44px 1fr 44px 1fr;
+      align-items: center; gap: 8px; margin: 18px 0; }
+    .arrow .node { border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 14px; text-align: center; background: #fff; min-height: 90px;
+      display: grid; align-content: center; }
+    .arrow .node b { display: block; margin-bottom: 4px; font-size: 15px; }
+    .arrow .node small { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+    .arrow .connector { height: 2px; background: var(--teal); position: relative; }
+    .arrow .connector::after { content: ""; position: absolute; right: -1px; top: -5px;
+      border-left: 9px solid var(--teal); border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent; }
+    .diagram-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 12px; margin-top: 16px; }
+    .diagram-box { border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; padding: 16px; }
+    .diagram-box b { display: block; margin-bottom: 6px; font-size: 14px; line-height: 1.3; }
+    .diagram-box small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.55; }
+    .diagram-box.teal { border-top: 3px solid var(--teal); }
+    .diagram-box.olive { border-top: 3px solid var(--olive); }
+    .diagram-box.blue { border-top: 3px solid var(--blue); }
+    .terms { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+    .term { border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; padding: 14px; }
+    .term b { display: block; margin-bottom: 6px; font-size: 14px; }
+    .term span { display: block; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .questions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .question { border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fff; padding: 16px; }
+    .question b { display: block; margin-bottom: 6px; font-size: 14px; line-height: 1.4; }
+    .question span { display: block; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .mindmap { display: grid; gap: 14px; }
+    .root-node { justify-self: center; border: 2px solid var(--rust); border-radius: var(--radius);
+      padding: 13px 20px; background: #fff7f1; font-weight: 800; text-align: center; font-size: 16px; }
+    .branches { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
+    .branch { border: 1px solid var(--line); border-top: 4px solid var(--teal);
+      border-radius: var(--radius); background: #fff; padding: 14px; }
+    .branch:nth-child(2) { border-top-color: var(--rust); }
+    .branch:nth-child(3) { border-top-color: var(--olive); }
+    .branch:nth-child(4) { border-top-color: var(--blue); }
+    .branch b { display: block; margin-bottom: 6px; font-size: 14px; }
+    .branch span { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+    .footer-note { color: var(--muted); font-size: 13px; text-align: center; padding: 24px 0 0; }
+
+    /* ── 新增優化 ───────────────────────────────────────────────── */
+    /* 捲動進度條 */
+    .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--rust), var(--teal));
+      z-index: 200; transition: width .08s linear; border-radius: 0 2px 2px 0; }
+
+    /* 章節目錄進度 badge */
+    .progress-badge { display: inline-block; background: #eef8f5; color: var(--teal);
+      border: 1px solid rgba(47,117,111,.3); border-radius: 999px;
+      font-size: 11px; font-weight: 700; padding: 2px 8px; margin-left: 6px;
+      vertical-align: middle; }
+
+    /* 色碼凡例 */
+    .legend { padding: 12px 16px; background: var(--surface);
+      border: 1px solid var(--line); border-radius: var(--radius); }
+    .legend-label { font-size: 11px; font-weight: 700; color: var(--muted);
+      letter-spacing: .05em; margin-bottom: 10px; }
+    .legend-items { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
+    .legend-item { display: flex; align-items: center; gap: 7px;
+      font-size: 12.5px; color: var(--muted); }
+    .legend-swatch { width: 28px; height: 14px; border-radius: 0 3px 3px 0; flex-shrink: 0; }
+    .legend-swatch.yuanwen { background: var(--wash); border-left: 3px solid var(--rust); }
+    .legend-swatch.anyu   { background: #eef8f5;  border-left: 3px solid var(--teal); }
+    .legend-swatch.keyline{ background: #fff7f1;  border-left: 4px solid var(--rust); }
+
+    /* Hero 裝飾大字 */
+    .hero { position: relative; overflow: hidden; }
+    .hero-deco { position: absolute; right: -10px; top: 50%;
+      transform: translateY(-52%);
+      font-size: clamp(180px, 22vw, 300px); font-weight: 900; line-height: 1;
+      color: rgba(164,79,49,.045); pointer-events: none; user-select: none;
+      font-family: "Noto Serif TC", "PingFang TC", "Songti TC", serif; }
+
+    /* responsive */
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 200px minmax(0,1fr) 280px; }
+    }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr;
+        grid-template-areas: "timeline" "content" "yuanwen"; }
+      .timeline, .yuanwen-panel { position: static; max-height: 320px; }
+      .summary-strip, .terms, .diagram-row { grid-template-columns: 1fr 1fr; }
+      .questions, .branches { grid-template-columns: 1fr; }
+      .arrow { grid-template-columns: 1fr; }
+      .arrow .connector { width: 2px; height: 28px; justify-self: center; }
+      .arrow .connector::after { right: -5px; top: auto; bottom: -1px;
+        border-left: 6px solid transparent; border-right: 6px solid transparent;
+        border-top: 9px solid var(--teal); border-bottom: 0; }
+    }
+    @media (max-width: 560px) {
+      main { padding: 16px 14px 48px; }
+      .section { padding: 20px 16px; }
+      h1 { font-size: 38px; }
+      .summary-strip, .terms, .diagram-row, .questions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ── topbar ──────────────────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <strong>古今醫案按</strong>
+      <span>卷一・中風門 ── 清・俞震東扶評按｜圖文筆記</span>
+    </div>
+    <nav class="nav" aria-label="頁面導覽">
+      <a href="#notes">段落筆記</a>
+      <a href="#diagrams">概念圖解</a>
+      <a href="#terms">術語卡片</a>
+      <a href="#questions">自我提問</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── hero ──────────────────────────────────────────────────────── -->
+  <section class="hero" aria-labelledby="page-title">
+    <span class="hero-deco" aria-hidden="true">風</span>
+    <p class="eyebrow">古今醫案按・卷一・中風門</p>
+    <h1 id="page-title">中風篇</h1>
+    <p class="hero-sub">十案並陳、三代諸家評按，以「閉脫之辨」為核心骨幹，橫跨真中風、類中風、本虛標實的完整辨治格局。</p>
+    <div class="summary-strip" aria-label="本篇綱要">
+      <div class="summary-item">
+        <b>辨證核心</b>
+        <span>閉脫之辨是中風下手第一要著；症脈宜合參，不可偏執一端</span>
+      </div>
+      <div class="summary-item">
+        <b>治則精華</b>
+        <span>標本虛實分途異治：脫者急補，閉者速攻，本虛標實者兼顧</span>
+      </div>
+      <div class="summary-item">
+        <b>醫史視角</b>
+        <span>劉李朱張四家與塞外真中論，共補偏救弊，建構完整中風學說史</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── three-column layout ──────────────────────────────────────── -->
+  <section class="layout" id="notes">
+
+    <!-- timeline / chapter nav -->
+    <aside class="timeline" aria-label="章節目錄">
+      <h2>章節目錄 <span class="progress-badge">1 / 9</span></h2>
+
+      <div class="chapter-sep">第一案</div>
+      <div class="chapter">
+        <button class="active" data-target="c1">
+          <time>案一</time>
+          <span>許允宗・蒸熏外治法</span>
+        </button>
+      </div>
+
+      <div class="chapter-sep" style="margin-top:4px">待更新</div>
+      <div class="chapter dim">
+        <button disabled>
+          <time>案二</time>
+          <span>丹溪・脫症急救</span>
+        </button>
+      </div>
+      <div class="chapter dim">
+        <button disabled>
+          <time>案三</time>
+          <span>趙以德・五精相併</span>
+        </button>
+      </div>
+      <div class="chapter dim">
+        <button disabled>
+          <time>案四</time>
+          <span>丹溪・閉症攻邪</span>
+        </button>
+      </div>
+      <div class="chapter dim">
+        <button disabled>
+          <time>案五</time>
+          <span>薛立齋・從脾論治</span>
+        </button>
+      </div>
+      <div class="chapter dim">
+        <button disabled>
+          <time>案六</time>
+          <span>寒痰熱痰辨・三生飲</span>
+        </button>
+      </div>
+      <div class="chapter dim">
+        <button disabled>
+          <time>案七</time>
+          <span>孫東宿・中風先兆</span>
+        </button>
+      </div>
+      <div class="chapter dim">
+        <button disabled>
+          <time>案八</time>
+          <span>喻嘉言・偏枯左右論</span>
+        </button>
+      </div>
+      <div class="chapter dim">
+        <button disabled>
+          <time>總按</time>
+          <span>諸家學說史</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- 原文對照 panel -->
+    <aside class="yuanwen-panel" aria-label="原文對照">
+      <div class="yw-header">
+        <span class="yw-header-badge">原</span>
+        <span class="yw-header-title">原文對照</span>
+      </div>
+      <div class="yw-body">
+
+        <div class="yw-block active" id="yw-c1">
+          <div class="yw-tag">案一・許允宗案</div>
+          <div class="yw-text">
+            唐書載許允宗初仕陳，為新蔡王外兵參軍。時柳太后感風不能言，脈沉而口噤，允宗曰口不下藥，宜以湯氣蒸之，令藥入腠理，周時可瘥。遂造黃耆防風湯，煮數十斛，置床下氣如煙霧，熏蒸之而得語，遂超拜義興太守。
+          </div>
+        </div>
+
+        <div class="yw-block" id="yw-c1-anyu">
+          <div class="yw-tag">俞震・按語（附羅謙甫三案）</div>
+          <div class="yw-text">
+            （震）按書稱允宗醫術若神，曾曰醫者意也，在人思慮，即此條思慮巧矣，然僅可治真中風內經所謂其有邪者漬形以為汗也，邪從汗解故得語。若概試諸不能言者決無效。又按羅謙甫治史太尉。冬月坐火爐左側，覺面熱，左頰微汗。旋出外。因左頰疏緩，被風寒客之，右頰急，口喎於右，脈浮緊，按之洪緩。羅用升麻湯加桂枝、白芷、艽、防，兼炙地倉頰車穴。此治風中陽明經之表證也。趙僧判半身不遂，語言不出，神昏面紅，耳聾鼻塞，六脈弦數。羅謂中藏者多滯九竅，中府者多著四肢。今臟腑俱受邪，先用三化湯行之，通其壅滯使清氣上升，充實四肢，次與至寶丹，安心養神，通利九竅。五日。音聲出，語言稍利。惟行步艱難。又刺十二經之井穴以接經絡，隨四時脈症加減用藥，百日方愈。此治中府兼中藏之裡證也，皆風邪實證也。張安撫半身不遂，語言謇澀，自汗惡風，痰嗽不寐。羅謂風寒傷形，憂恐忿怒傷氣。……（略）此治中經兼中府。本虛標實之症也。許允宗所治亦係本虛標實者，但病起於暴，故用蒸法，亦如通關散之取嚏，稀涎散之探痰也。
+          </div>
+        </div>
+
+        <div class="yw-block" id="yw-placeholder" style="opacity:.35">
+          <div class="yw-tag">後續各案（待更新）</div>
+          <div class="yw-text" style="font-size:12px">丹溪治浦江鄭君・趙以德・薛立齋・孫東宿・喻嘉言諸案，後續章節陸續更新。</div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- content -->
+    <div class="content">
+
+      <!-- 色碼凡例 -->
+      <div class="legend">
+        <div class="legend-label">閱讀說明：色碼代表意義</div>
+        <div class="legend-items">
+          <div class="legend-item">
+            <div class="legend-swatch yuanwen"></div>
+            <span>原文引用（古典漢文）</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch anyu"></div>
+            <span>俞震按語（評析）</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch keyline"></div>
+            <span>我的理解（學習重點）</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 案一：許允宗蒸熏外治法 ──────────────────────────── -->
+      <article class="section" id="c1">
+        <h2>許允宗蒸熏外治法</h2>
+        <p class="section-meta">唐・陳朝舊史 ── 收錄於《古今醫案按》卷一・中風門</p>
+        <!-- 漫畫分鏡 -->
+        <figure class="manga-strip" style="margin:0 0 24px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 32px rgba(55,43,30,.10);">
+          <img src="codex-images/20260610T002441Z-1.png" alt="許允宗蒸熏治太后・漫畫分鏡四格" style="width:100%;display:block;">
+          <figcaption style="padding:10px 14px;color:var(--muted);font-size:13px;line-height:1.5;background:var(--wash);">
+            漫畫分鏡：格一・診脈口噤 → 格二・「口不下藥」困境 → 格三・大釜蒸熏藥霧繚繞 → 格四・太后復語（「多謝神醫！」）
+          </figcaption>
+        </figure>
+
+        <p class="lead">一位被後世稱為「醫術若神」的醫官，面對連藥都服不下去的昏憒病人，靠著一鍋熱騰騰的藥湯，讓太后重新開口說話。</p>
+
+        <!-- 原文引用（關鍵句） -->
+        <div class="yw-quote">
+          「口不下藥，宜以湯氣蒸之，令藥入腠理，周時可瘥。」
+          <cite>許允宗語・《古今醫案按》卷一・中風門｜<a href="#yw-c1" style="color:var(--teal);">完整原文見右側對照窗 →</a></cite>
+        </div>
+
+        <!-- 白話翻譯 -->
+        <h3>白話翻譯</h3>
+        <p>《唐書》記載，許允宗在陳朝初入仕途，擔任新蔡王的外兵參軍（武官幕僚）。當時柳太后因中風而失語，脈象沉伏、口關緊閉，根本無法服藥。</p>
+        <p>許允宗說：「口既然無法喝藥，就應該讓藥氣以蒸熏的方式進入身體，使藥性透過皮膚腠理滲入，大約一個晝夜就能痊癒。」</p>
+        <p>於是他煮了幾十斛的大劑黃耆防風湯，放置在床下，讓蒸騰的藥霧如煙如霧地薰蒸全身。太后果然漸漸恢復語言，許允宗也因此被破格升任義興太守。</p>
+
+        <!-- 病機圖解 SVG -->
+        <div class="note-grid">
+          <div>
+            <h3>俞震按語・精要解析</h3>
+            <p>俞震特別指出：此法「巧」，但有其邊界——<strong>只適用於真中風（外風直中）</strong>。其理論根據來自《內經》：「其有邪者，漬形以為汗，邪從汗解。」風邪在表、鬱於腠理，故蒸熏可迫汗出邪，語言自然恢復。</p>
+            <p>若泛用於其他原因導致的失語，則「決無效」——俞震特意警示學者，不要因為一個成功案例就模仿套用。</p>
+            <p>按語接著引述<strong>羅謙甫三案</strong>，示範了三種截然不同的中風治路，形成一個由表至裡、由實至虛的辨治地圖：</p>
+          </div>
+          <figure class="figure slide" aria-label="蒸熏療法機制圖">
+            <!-- SVG 1: 蒸熏療法機制示意 -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
+              <rect width="1200" height="760" fill="#fbfaf7"/>
+              <rect x="36" y="36" width="1128" height="688" rx="16" fill="white" stroke="#d9d2c8" stroke-width="2"/>
+
+              <!-- Title -->
+              <text x="600" y="88" text-anchor="middle" font-family="-apple-system,'PingFang TC','Noto Sans TC',sans-serif" font-size="34" font-weight="800" fill="#25211d">蒸熏療法・機制解析</text>
+              <text x="600" y="116" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="15" fill="#6e665f">《內經》依據：「其有邪者，漬形以為汗，邪從汗解。」</text>
+
+              <!-- Divider line -->
+              <line x1="80" y1="134" x2="1120" y2="134" stroke="#d9d2c8" stroke-width="1.5"/>
+
+              <!-- ── Left: 病機 ── -->
+              <rect x="68" y="152" width="490" height="528" rx="12" fill="#eef2f7" stroke="#466b91" stroke-width="2"/>
+              <text x="313" y="192" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="20" font-weight="800" fill="#466b91">病機・困境</text>
+
+              <!-- Step boxes left -->
+              <!-- Box A -->
+              <rect x="100" y="212" width="428" height="80" rx="10" fill="white" stroke="#d9d2c8" stroke-width="1.5"/>
+              <text x="314" y="248" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="18" font-weight="700" fill="#25211d">外風直中・真中風</text>
+              <text x="314" y="272" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" fill="#6e665f">風邪夾寒，卒然入中，搏結腠理</text>
+
+              <!-- Arrow down -->
+              <line x1="314" y1="292" x2="314" y2="330" stroke="#466b91" stroke-width="2.5"/>
+              <polygon points="314,342 307,326 321,326" fill="#466b91"/>
+
+              <!-- Box B -->
+              <rect x="100" y="344" width="428" height="80" rx="10" fill="white" stroke="#d9d2c8" stroke-width="1.5"/>
+              <text x="314" y="380" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="18" font-weight="700" fill="#25211d">脈沉・口噤・不能言</text>
+              <text x="314" y="404" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" fill="#6e665f">氣血閉塞，正氣不達</text>
+
+              <!-- Arrow down -->
+              <line x1="314" y1="424" x2="314" y2="462" stroke="#466b91" stroke-width="2.5"/>
+              <polygon points="314,474 307,458 321,458" fill="#466b91"/>
+
+              <!-- Box C (problem) -->
+              <rect x="100" y="476" width="428" height="80" rx="10" fill="#fff0ec" stroke="#a44f31" stroke-width="2"/>
+              <text x="314" y="512" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="18" font-weight="700" fill="#a44f31">「口不下藥」困境</text>
+              <text x="314" y="536" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" fill="#6e665f">常規口服湯藥之路已斷</text>
+
+              <!-- Question mark box -->
+              <rect x="100" y="576" width="428" height="68" rx="10" fill="#f1ede6" stroke="#d9d2c8" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <text x="314" y="616" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="16" fill="#6e665f">如何讓藥性進入體內？</text>
+
+              <!-- ── Center arrow ── -->
+              <line x1="560" y1="430" x2="640" y2="430" stroke="#2f756f" stroke-width="4"/>
+              <polygon points="652,430 636,422 636,438" fill="#2f756f"/>
+              <rect x="565" y="388" width="66" height="80" rx="8" fill="#eef8f5" stroke="#2f756f" stroke-width="1.5"/>
+              <text x="598" y="422" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" font-weight="800" fill="#2f756f">蒸</text>
+              <text x="598" y="442" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" font-weight="800" fill="#2f756f">熏</text>
+              <text x="598" y="462" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" font-weight="800" fill="#2f756f">法</text>
+
+              <!-- ── Right: 治法 ── -->
+              <rect x="650" y="152" width="508" height="528" rx="12" fill="#eef8f5" stroke="#2f756f" stroke-width="2"/>
+              <text x="904" y="192" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="20" font-weight="800" fill="#2f756f">治法・結果</text>
+
+              <!-- Right step boxes -->
+              <!-- Box R1 -->
+              <rect x="678" y="212" width="454" height="80" rx="10" fill="white" stroke="#d9d2c8" stroke-width="1.5"/>
+              <text x="905" y="244" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="18" font-weight="700" fill="#25211d">黃耆防風湯・數十斛</text>
+              <text x="905" y="268" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" fill="#6e665f">黃耆益氣固表・防風祛風解肌</text>
+
+              <!-- Arrow down -->
+              <line x1="905" y1="292" x2="905" y2="330" stroke="#2f756f" stroke-width="2.5"/>
+              <polygon points="905,342 898,326 912,326" fill="#2f756f"/>
+
+              <!-- Box R2 -->
+              <rect x="678" y="344" width="454" height="80" rx="10" fill="white" stroke="#d9d2c8" stroke-width="1.5"/>
+              <text x="905" y="376" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="18" font-weight="700" fill="#25211d">煮沸置床下・氣如煙霧</text>
+              <text x="905" y="400" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" fill="#6e665f">以湯氣蒸之，全身薰蒸</text>
+
+              <!-- Arrow down -->
+              <line x1="905" y1="424" x2="905" y2="462" stroke="#2f756f" stroke-width="2.5"/>
+              <polygon points="905,474 898,458 912,458" fill="#2f756f"/>
+
+              <!-- Box R3 -->
+              <rect x="678" y="476" width="454" height="80" rx="10" fill="white" stroke="#d9d2c8" stroke-width="1.5"/>
+              <text x="905" y="508" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="18" font-weight="700" fill="#25211d">藥入腠理・汗出邪解</text>
+              <text x="905" y="532" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" fill="#6e665f">「漬形以為汗」，正是此義</text>
+
+              <!-- Arrow down -->
+              <line x1="905" y1="556" x2="905" y2="576" stroke="#2f756f" stroke-width="2.5"/>
+              <polygon points="905,588 898,572 912,572" fill="#2f756f"/>
+
+              <!-- Box R4 (success) -->
+              <rect x="678" y="580" width="454" height="68" rx="10" fill="#eef8f5" stroke="#2f756f" stroke-width="2.5"/>
+              <text x="905" y="608" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="18" font-weight="800" fill="#2f756f">「熏蒸之而得語」</text>
+              <text x="905" y="634" text-anchor="middle" font-family="-apple-system,'PingFang TC',sans-serif" font-size="13" fill="#2f756f">語言恢復，治療成功</text>
+            </svg>
+            <figcaption>圖一：蒸熏療法機制——以湯氣代替口服，藥透腠理，汗出邪解，為外治智慧的典型示範。</figcaption>
+          </figure>
+        </div>
+
+        <!-- 羅謙甫三案對比 -->
+        <h3>附：羅謙甫三案辨治層次</h3>
+        <p>俞震引述羅謙甫的三個案例，說明中風治法並非一成不變，而要依「病位深淺・正邪虛實」分層處理：</p>
+
+        <div class="diagram-row">
+          <div class="diagram-box teal">
+            <b>① 史太尉案・表證</b>
+            <small>冬月受寒，左頰疏緩，口喎於右，脈浮緊。<br>治法：升麻湯加桂枝、白芷、艽、防；炙地倉頰車穴。<br><strong>病位：中陽明經・表證</strong></small>
+          </div>
+          <div class="diagram-box olive">
+            <b>② 趙僧判案・裡證</b>
+            <small>半身不遂，神昏耳聾，六脈弦數。<br>先三化湯通腑，次至寶丹安神，刺十二井穴，百日方愈。<br><strong>病位：中府兼中藏・裡實證</strong></small>
+          </div>
+          <div class="diagram-box blue">
+            <b>③ 張安撫案・本虛標實</b>
+            <small>半身不遂，自汗惡風，痰嗽不寐。<br>加減沖和湯扶正，硃砂安神丸，針炙肩井尺澤。<br><strong>病位：中經兼中府・本虛標實</strong></small>
+          </div>
+        </div>
+
+        <!-- 按語 block -->
+        <div class="anyu-block">
+          <div class="anyu-label">俞震・按語精義</div>
+          許允宗所治，亦係本虛標實者，但病起於暴，故用蒸法——猶如通關散之取嚏、稀涎散之探痰，皆是在「口不下藥」時尋找替代路徑的應急智慧。<br><br>
+          俞震強調：此法<strong>僅可治真中風</strong>（外邪在表，邪從汗解），若不辨病機而概試諸不能言者，「決無效」。辨清病機，是效法古人之前必備的功課。
+        </div>
+
+        <div class="keyline">
+          <strong>我的理解：</strong>許允宗的「巧」不在於找到一個奇特的方法，而在於<strong>看穿了問題的本質</strong>——口噤不能服藥是手段上的障礙，不是疾病無法治的理由。他把問題重新定義為「如何讓藥性進入身體」，才有了蒸熏的解法。俞震提醒我們：理解「為什麼有效」，比記住「用了什麼方法」更重要。
+        </div>
+      </article>
+
+      <!-- ── diagrams ─────────────────────────────────────────────── -->
+      <article class="section" id="diagrams">
+        <h2>概念圖解</h2>
+
+        <!-- 三化湯→至寶丹 arrow sequence for 羅謙甫三案 -->
+        <h3>辨治層次：由表至裡・由實至虛</h3>
+        <div class="arrow" aria-label="三層辨治流程">
+          <div class="node">
+            <b>表證（輕）</b>
+            <small>中陽明經<br>脈浮緊・口喎<br>祛風解表</small>
+          </div>
+          <div class="connector"></div>
+          <div class="node">
+            <b>裡實證（重）</b>
+            <small>中府兼中藏<br>神昏脈弦數<br>通腑開竅</small>
+          </div>
+          <div class="connector"></div>
+          <div class="node">
+            <b>本虛標實（複雜）</b>
+            <small>中經兼中府<br>自汗惡風痰嗽<br>扶正兼祛邪</small>
+          </div>
+        </div>
+
+        <!-- mind map -->
+        <h3>案一知識心智圖</h3>
+        <div class="mindmap">
+          <div class="root-node">許允宗蒸熏案・核心思維</div>
+          <div class="branches">
+            <div class="branch">
+              <b>外治思路</b>
+              <span>口噤無法服藥 → 改以湯氣透腠理 → 外治代口服</span>
+            </div>
+            <div class="branch">
+              <b>理論依據</b>
+              <span>《內經》：漬形以為汗，邪從汗解；外邪在表方有效</span>
+            </div>
+            <div class="branch">
+              <b>俞震警示</b>
+              <span>此法僅限真中風，不可概試失語症；必先明病機</span>
+            </div>
+            <div class="branch">
+              <b>附：羅謙甫</b>
+              <span>三案示三層：表・裡實・本虛標實；分層辨治綱要</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── terms ──────────────────────────────────────────────────── -->
+      <article class="section" id="terms">
+        <h2>概念與術語卡片</h2>
+        <div class="terms">
+          <div class="term">
+            <b>真中風</b>
+            <span>外風直中，非內因化風。北方折風燥烈，可致卒中暴死。治宜祛風解表透邪。</span>
+          </div>
+          <div class="term">
+            <b>腠理</b>
+            <span>皮膚紋理及肌肉、臟腑間隙的統稱，是衛氣運行、邪氣出入的通道。</span>
+          </div>
+          <div class="term">
+            <b>黃耆防風湯</b>
+            <span>黃耆益氣固表、防風疏風解肌。合用可托邪外出，此案用「數十斛」大劑蒸熏。</span>
+          </div>
+          <div class="term">
+            <b>邪從汗解</b>
+            <span>表邪在腠理，透過汗液排出的治療機制；「漬形以為汗」是《內經》對此的詮釋。</span>
+          </div>
+          <div class="term">
+            <b>本虛標實</b>
+            <span>根本是正氣虛損（本虛），標象是風邪痰壅等邪實（標實）。治需兼顧，不可偏攻。</span>
+          </div>
+          <div class="term">
+            <b>中陽明經</b>
+            <span>風邪中於足陽明胃經，以口眼喎斜為主症；屬中風中的表淺病位。</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── questions ───────────────────────────────────────────── -->
+      <article class="section" id="questions">
+        <h2>給自己的提問</h2>
+        <div class="questions">
+          <div class="question">
+            <b>醫者意也——「意」在哪裡？</b>
+            <span>許允宗說「醫者意也，在人思慮」。本案的「思慮之巧」體現在哪個環節？他是如何從「口不下藥」這個死局中看到出路的？</span>
+          </div>
+          <div class="question">
+            <b>如何判斷「真中風」？</b>
+            <span>俞震說此法「僅可治真中風」。在臨床面對失語症患者時，你能列出哪些線索幫助判斷這是真中風（外邪）還是類中風（內因）？</span>
+          </div>
+          <div class="question">
+            <b>現代對應：透皮給藥？</b>
+            <span>蒸熏法本質是讓藥物透過皮膚吸收。現代藥學有貼片劑、穴位貼敷等透皮途徑。兩者原理有何相通之處？又有何根本差異？</span>
+          </div>
+          <div class="question">
+            <b>羅謙甫三案的臨床啟示</b>
+            <span>三案依病位由淺（表）至深（裡）、由實至虛排列。這個「分層辨治」的框架，今天面對急性腦中風時，你會如何對應運用？</span>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /content -->
+  </section><!-- /layout -->
+
+  <p class="footer-note">
+    原文出自《古今醫案按》卷第一・中風門（清・俞震東扶評按）・會文堂石印本｜學生圖文筆記・僅供學習參考<br>
+    數位來源：<a href="https://cmeta.lctseng.csie.org/prototype/?brid=YWdncwE4sXoT0doQEhlGVlPnMWgp" target="_blank" rel="noopener" style="color:var(--teal);text-decoration:underline;">中醫文獻資料庫（cmeta.lctseng.csie.org）</a>
+  </p>
+
+</main>
+
+<script>
+  /* ── 捲動進度條 ── */
+  const scrollBar = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    scrollBar.style.width = Math.min(100, (window.scrollY / total) * 100) + '%';
+  }, { passive: true });
+
+  /* ── Chapter nav: click → scroll to section ── */
+  document.querySelectorAll('[data-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = document.getElementById(btn.dataset.target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('[data-target]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  /* ── Scroll spy: highlight active chapter ── */
+  const sections = Array.from(document.querySelectorAll('.section[id^="c"]'));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        document.querySelectorAll('[data-target]').forEach(b =>
+          b.classList.toggle('active', b.dataset.target === id));
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+  sections.forEach(s => io.observe(s));
+</script>
+
+</body>
+</html>
